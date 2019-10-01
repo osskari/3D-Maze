@@ -8,6 +8,7 @@ import time
 
 from shaders import *
 from matrices import *
+from gameObjects import *
 
 
 class Maze3D:
@@ -22,7 +23,10 @@ class Maze3D:
         self.model_matrix = ModelMatrix()
 
         self.view_matrix = ViewMatrix()
-        self.view_matrix.look(Point(0, 3, 10), Point(0, 0, 0), Vector(0, 1, 0))
+
+        self.player = Player(Point(0, 3, 10), 5, pi, Point(0, 1, 0))
+
+        self.view_matrix.look(self.player.position, self.player.looking_at, self.player.normal)
 
         self.projection_matrix = ProjectionMatrix()
         # self.projection_matrix.set_orthographic(-2, 2, -2, 2, 0.5, 10)
@@ -30,53 +34,34 @@ class Maze3D:
         self.shader.set_projection_matrix(self.projection_matrix.get_matrix())
 
         self.cube = Cube()
+        self.level = Level(Drawable((0.0, 1.0, 0.0), Point(5.0, 0.0, 5.0), (100.0, 0.1, 100.0)))
+        self.inputs = inputs
 
         self.clock = pygame.time.Clock()
         self.clock.tick()
 
         self.angle = 0
 
-        self.UP_key_down = False
-        self.w_key_down = False
-        self.s_key_down = False
-        self.a_key_down = False
-        self.d_key_down = False
-        self.q_key_down = False
-        self.e_key_down = False
-
-        self.white_background = False
-
     def update(self):
         delta_time = self.clock.tick() / 1000.0
 
         self.angle += pi * delta_time
-        # if angle > 2 * pi:
-        #     angle -= (2 * pi)
+        if self.angle > 2 * pi:
+            self.angle -= (2 * pi)
 
-        if self.w_key_down:
-            self.view_matrix.slide(0, 0, -1 * delta_time)
-        if self.s_key_down:
-            self.view_matrix.slide(0, 0, 1 * delta_time)
-        if self.a_key_down:
-            self.view_matrix.slide(-1 * delta_time, 0, 0)
-        if self.d_key_down:
-            self.view_matrix.slide(1 * delta_time, 0, 0)
-        if self.q_key_down:
-            self.view_matrix.roll(-pi * delta_time)
-        if self.e_key_down:
-            self.view_matrix.roll(pi * delta_time)
-        if self.UP_key_down:
-            self.white_background = True
-        else:
-            self.white_background = False
+        if self.inputs["W"]:
+            self.view_matrix.slide(0, 0, -self.player.speed * delta_time)
+        if self.inputs["S"]:
+            self.view_matrix.slide(0, 0, self.player.speed * delta_time)
+        if self.inputs["A"]:
+            self.view_matrix.yaw(-self.player.rotationSpeed * delta_time)
+        if self.inputs["D"]:
+            self.view_matrix.yaw(self.player.rotationSpeed * delta_time)
 
     def display(self):
         glEnable(GL_DEPTH_TEST)
 
-        if self.white_background:
-            glClearColor(1.0, 1.0, 1.0, 1.0)
-        else:
-            glClearColor(0.0, 0.0, 0.0, 1.0)
+        glClearColor(0.0, 0.0, 0.0, 1.0)
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
         glViewport(0, 0, 800, 600)
@@ -91,16 +76,17 @@ class Maze3D:
 
         self.shader.set_solid_color(1.0, 0.0, 0.0)
         self.model_matrix.push_matrix()
-        self.model_matrix.add_translation(9.0, 5.0, -2.0)
+        self.model_matrix.add_translation(9.0, 3.0, -2.0)
         self.model_matrix.add_scale(2.0, 2.0, 2.0)
         self.shader.set_model_matrix(self.model_matrix.matrix)
         self.cube.draw()
         self.model_matrix.pop_matrix()
 
-        self.shader.set_solid_color(0.0, 1.0, 0.0)
+        # Draw floor
+        self.shader.set_solid_color(*self.level.floor.color)
         self.model_matrix.push_matrix()
-        self.model_matrix.add_translation(-5.0, -0.8, -5.0)
-        self.model_matrix.add_scale(10.0, 0.8, 10.0)
+        self.model_matrix.add_translation(*self.level.floor.position.to_list())
+        self.model_matrix.add_scale(*self.level.floor.size)
         self.shader.set_model_matrix(self.model_matrix.matrix)
         self.cube.draw()
         self.model_matrix.pop_matrix()
@@ -117,35 +103,23 @@ class Maze3D:
                 if event.key == K_ESCAPE:
                     print("Escaping!")
                     ret_val = True
-                if event.key == K_UP:
-                    self.UP_key_down = True
                 if event.key == K_w:
-                    self.w_key_down = True
+                    self.inputs["W"] = True
                 if event.key == K_s:
-                    self.s_key_down = True
+                    self.inputs["S"] = True
                 if event.key == K_a:
-                    self.a_key_down = True
+                    self.inputs["A"] = True
                 if event.key == K_d:
-                    self.d_key_down = True
-                if event.key == K_q:
-                    self.q_key_down = True
-                if event.key == K_e:
-                    self.e_key_down = True
+                    self.inputs["D"] = True
             elif event.type == pygame.KEYUP:
-                if event.key == K_UP:
-                    self.UP_key_down = False
                 if event.key == K_w:
-                    self.w_key_down = False
+                    self.inputs["W"] = False
                 if event.key == K_s:
-                    self.s_key_down = False
+                    self.inputs["S"] = False
                 if event.key == K_a:
-                    self.a_key_down = False
+                    self.inputs["A"] = False
                 if event.key == K_d:
-                    self.d_key_down = False
-                if event.key == K_q:
-                    self.q_key_down = False
-                if event.key == K_e:
-                    self.e_key_down = False
+                    self.inputs["D"] = False
         return ret_val
 
     def program_loop(self):

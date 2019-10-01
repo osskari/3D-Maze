@@ -127,17 +127,27 @@ class ViewMatrix:
         self.v = self.u * -s + self.v * c
         self.u = tmp_u
 
-    def pitch(self):
-        pass
+    def pitch(self, angle):
+        c = cos(angle)
+        s = sin(angle)
 
-    def yaw(self):
-        pass
+        tmp_v = self.v * c + self.n * -s
+        self.n = self.v * s + self.n * c
+        self.v = tmp_v
+
+    def yaw(self, angle):
+        c = cos(angle)
+        s = sin(angle)
+
+        tmp_u = self.u * c + self.n * s
+        self.n = self.u * -s + self.n * c
+        self.u = tmp_u
 
     def get_matrix(self):
-        minusEye = Vector(-self.eye.x, -self.eye.y, -self.eye.z)
-        return [self.u.x, self.u.y, self.u.z, minusEye.dot(self.u),
-                self.v.x, self.v.y, self.v.z, minusEye.dot(self.v),
-                self.n.x, self.n.y, self.n.z, minusEye.dot(self.n),
+        minus_eye = Vector(-self.eye.x, -self.eye.y, -self.eye.z)
+        return [self.u.x, self.u.y, self.u.z, minus_eye.dot(self.u),
+                self.v.x, self.v.y, self.v.z, minus_eye.dot(self.v),
+                self.n.x, self.n.y, self.n.z, minus_eye.dot(self.n),
                 0, 0, 0, 1]
 
 
