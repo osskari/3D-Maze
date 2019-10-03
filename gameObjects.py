@@ -22,18 +22,9 @@ class Drawable:
         self.size = size
 
 
-# class Inputs:
-#     def __init__(self):
-#         self.inputs = {
-#             "W": False,
-#             "A": False,
-#             "S": False,
-#             "D": False
-#         }
-
 inputs = {
-            "W": False,
-            "A": False,
-            "S": False,
-            "D": False
+            "W": False,  # Walk forward
+            "A": False,  # Turn left
+            "S": False,  # Walk backwards
+            "D": False   # Turn right
         }

@@ -20,6 +20,12 @@ class Point:
     def __sub__(self, other):
         return Vector(self.x - other.x, self.y - other.y, self.z - other.z)
 
+    def __eq__(self, other):
+        return self.x == other.x and self.y == other.y and self.z == other.z
+
+    def __floor__(self):
+        return Point(floor(self.x), floor(self.y), floor(self.z))
+
     def to_list(self):
         return [self.x, self.y, self.z]
 
@@ -113,8 +119,8 @@ class Cube:
 
     def draw(self):
         glDrawArrays(GL_TRIANGLE_FAN, 0, 4)
-        glDrawArrays(GL_TRIANGLE_FAN, 4, 4)
-        glDrawArrays(GL_TRIANGLE_FAN, 8, 4)
-        glDrawArrays(GL_TRIANGLE_FAN, 12, 4)
-        glDrawArrays(GL_TRIANGLE_FAN, 16, 4)
-        glDrawArrays(GL_TRIANGLE_FAN, 20, 4)
+        # glDrawArrays(GL_TRIANGLE_FAN, 4, 4)
+        # glDrawArrays(GL_TRIANGLE_FAN, 8, 4)
+        # glDrawArrays(GL_TRIANGLE_FAN, 12, 4)
+        # glDrawArrays(GL_TRIANGLE_FAN, 16, 4)
+        # glDrawArrays(GL_TRIANGLE_FAN, 20, 4)
