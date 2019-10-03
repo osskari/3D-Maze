@@ -24,21 +24,27 @@ class Maze3D:
 
         self.view_matrix = ViewMatrix()
 
-        self.player = Player(Point(0, 3, 10), 5, pi, Point(0, 1, 0))
+        self.player = Player(Point(0, 3, 10), 10, pi, Point(0, 1, 0))
 
         self.view_matrix.look(self.player.position, self.player.looking_at, self.player.normal)
 
         self.projection_matrix = ProjectionMatrix()
         # self.projection_matrix.set_orthographic(-2, 2, -2, 2, 0.5, 10)
-        self.projection_matrix.set_perspective(pi/2, 800/600, 0.5, 100)
+        self.projection_matrix.set_perspective(pi/2, 800/600, 0.3, 100)
         self.shader.set_projection_matrix(self.projection_matrix.get_matrix())
 
         self.cube = Cube()
-        self.level = Level(Drawable((0.0, 1.0, 0.0), Point(5.0, 0.0, 5.0), (100.0, 0.1, 100.0)))
+        self.level = Level(
+            Rectangle((0.0, 1.0, 0.0), Point(5.0, 0.0, 5.0), (100.0, 0.1, 100.0)),
+            Maze())
         self.inputs = inputs
 
         self.clock = pygame.time.Clock()
         self.clock.tick()
+
+        self.boxpos = [9.0, 3.0, -2.0]
+        self.boxscale = (4, 5, 15)
+        self.level.maze.walls.append(Rectangle((1.0, 0.0, 0.0), Point(*self.boxpos), self.boxscale))
 
         self.angle = 0
 
@@ -50,11 +56,17 @@ class Maze3D:
             self.angle -= (2 * pi)
 
         if self.inputs["W"]:
-            if floor(self.player.position) == Point(9.0, 3.0, -2.0):
-                print("Hebbo")
-            self.view_matrix.slide(0, 0, -self.player.speed * delta_time)
+            newpos = self.view_matrix.slide(0, 0, -self.player.speed * delta_time)
+            if not (Point(self.boxpos[0] - self.boxscale[0]/2 - 0.5, self.boxpos[1] - self.boxscale[1]/2, self.boxpos[2] - self.boxscale[2]/2 - 0.5)
+                    < self.view_matrix.eye + newpos
+                    < Point(self.boxpos[0] + self.boxscale[0]/2 + 0.5, self.boxpos[1] + self.boxscale[1]/2, self.boxpos[2] + self.boxscale[2]/2 + 0.5)):
+                self.view_matrix.eye += newpos
         if self.inputs["S"]:
-            self.view_matrix.slide(0, 0, self.player.speed * delta_time)
+            newpos = self.view_matrix.slide(0, 0, self.player.speed * delta_time)
+            if not (Point(self.boxpos[0] - self.boxscale[0]/2 - 0.5, self.boxpos[1] - self.boxscale[1]/2, self.boxpos[2] - self.boxscale[2]/2 - 0.5)
+                    < self.view_matrix.eye + newpos
+                    < Point(self.boxpos[0] + self.boxscale[0]/2 + 0.5, self.boxpos[1] + self.boxscale[1]/2, self.boxpos[2] + self.boxscale[2]/2 + 0.5)):
+                self.view_matrix.eye += newpos
         if self.inputs["A"]:
             self.view_matrix.yaw(-self.player.rotationSpeed * delta_time)
         if self.inputs["D"]:
@@ -74,24 +86,22 @@ class Maze3D:
         self.model_matrix.load_identity()
 
         # Draw stuff
-        if Point(9.0 - 1.5, 3.0 - 1.5, -2.0 - 1.5) < self.player.position < Point(9.0+1.5, 3.0+1.5, -2.0+1.5):
+        if Point(9.0 - 2.5, 3.0 - 1.5, -2.0 - 3) < self.player.position < Point(9.0+2.5, 3.0+1.5, -2.0+3):
             print(self.player.position)
 
         self.cube.set_vertices(self.shader)
 
         self.shader.set_solid_color(1.0, 0.0, 0.0)
         self.model_matrix.push_matrix()
-        self.model_matrix.add_translation(9.0, 3.0, -2.0)
-        self.model_matrix.add_scale(2.0, 2.0, 2.0)
-        self.shader.set_model_matrix(self.model_matrix.matrix)
-        self.cube.draw()
+
+        self.level.maze.walls[0].draw(self.model_matrix, self.shader, self.cube)
         self.model_matrix.pop_matrix()
 
         # Draw floor
         self.shader.set_solid_color(*self.level.floor.color)
         self.model_matrix.push_matrix()
         self.model_matrix.add_translation(*self.level.floor.position.to_list())
-        self.model_matrix.add_scale(*self.level.floor.size)
+        self.model_matrix.add_scale(*self.level.floor.scale)
         self.shader.set_model_matrix(self.model_matrix.matrix)
         self.cube.draw()
         self.model_matrix.pop_matrix()

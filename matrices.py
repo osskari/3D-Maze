@@ -117,7 +117,7 @@ class ViewMatrix:
         self.v = self.n.cross(self.u)
 
     def slide(self, del_u, del_v, del_n):
-        self.eye += self.u * del_u + self.v * del_v + self.n * del_n
+        return self.u * del_u + self.v * del_v + self.n * del_n
 
     def roll(self, angle):
         c = cos(angle)
