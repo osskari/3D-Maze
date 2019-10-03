@@ -50,6 +50,8 @@ class Maze3D:
             self.angle -= (2 * pi)
 
         if self.inputs["W"]:
+            if floor(self.player.position) == Point(9.0, 3.0, -2.0):
+                print("Hebbo")
             self.view_matrix.slide(0, 0, -self.player.speed * delta_time)
         if self.inputs["S"]:
             self.view_matrix.slide(0, 0, self.player.speed * delta_time)
