@@ -57,6 +57,7 @@ class Maze3D:
             self.view_matrix.yaw(-self.player.rotationSpeed * delta_time)
         if self.inputs["D"]:
             self.view_matrix.yaw(self.player.rotationSpeed * delta_time)
+        self.player.position = self.view_matrix.eye
 
     def display(self):
         glEnable(GL_DEPTH_TEST)
@@ -71,6 +72,8 @@ class Maze3D:
         self.model_matrix.load_identity()
 
         # Draw stuff
+        if Point(9.0 - 1.5, 3.0 - 1.5, -2.0 - 1.5) < self.player.position < Point(9.0+1.5, 3.0+1.5, -2.0+1.5):
+            print(self.player.position)
 
         self.cube.set_vertices(self.shader)
 
