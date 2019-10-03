@@ -143,6 +143,17 @@ class ViewMatrix:
         self.n = self.u * -s + self.n * c
         self.u = tmp_u
 
+    def is_between(self, new_pos, drawable, offset):
+        scale_x, scale_y, scale_z = drawable.scale
+        print(self.eye + new_pos)
+        return Point(drawable.position.x - scale_x / 2 - offset,
+                     drawable.position.y - scale_y / 2 - offset,
+                     drawable.position.z - scale_z / 2 - offset) \
+               < self.eye + new_pos \
+               < Point(drawable.position.x + scale_x / 2 + offset,
+                       drawable.position.y + scale_y / 2 + offset,
+                       drawable.position.z + scale_z / 2 + offset)
+
     def get_matrix(self):
         minus_eye = Vector(-self.eye.x, -self.eye.y, -self.eye.z)
         return [self.u.x, self.u.y, self.u.z, minus_eye.dot(self.u),

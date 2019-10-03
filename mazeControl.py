@@ -45,6 +45,7 @@ class Maze3D:
         self.boxpos = [9.0, 3.0, -2.0]
         self.boxscale = (4, 5, 15)
         self.level.maze.walls.append(Rectangle((1.0, 0.0, 0.0), Point(*self.boxpos), self.boxscale))
+        self.level.maze.walls.append(Rectangle((1.0, 0.0, 0.0), Point(3.0, 2.0, 3.0), (5.0, 5.0, 5.0)))
 
         self.angle = 0
 
@@ -57,15 +58,11 @@ class Maze3D:
 
         if self.inputs["W"]:
             newpos = self.view_matrix.slide(0, 0, -self.player.speed * delta_time)
-            if not (Point(self.boxpos[0] - self.boxscale[0]/2 - 0.5, self.boxpos[1] - self.boxscale[1]/2, self.boxpos[2] - self.boxscale[2]/2 - 0.5)
-                    < self.view_matrix.eye + newpos
-                    < Point(self.boxpos[0] + self.boxscale[0]/2 + 0.5, self.boxpos[1] + self.boxscale[1]/2, self.boxpos[2] + self.boxscale[2]/2 + 0.5)):
+            if not self.level.collision(newpos, 0.5, self.view_matrix):
                 self.view_matrix.eye += newpos
         if self.inputs["S"]:
             newpos = self.view_matrix.slide(0, 0, self.player.speed * delta_time)
-            if not (Point(self.boxpos[0] - self.boxscale[0]/2 - 0.5, self.boxpos[1] - self.boxscale[1]/2, self.boxpos[2] - self.boxscale[2]/2 - 0.5)
-                    < self.view_matrix.eye + newpos
-                    < Point(self.boxpos[0] + self.boxscale[0]/2 + 0.5, self.boxpos[1] + self.boxscale[1]/2, self.boxpos[2] + self.boxscale[2]/2 + 0.5)):
+            if not self.level.collision(newpos, 0.5, self.view_matrix):
                 self.view_matrix.eye += newpos
         if self.inputs["A"]:
             self.view_matrix.yaw(-self.player.rotationSpeed * delta_time)
@@ -92,10 +89,11 @@ class Maze3D:
         self.cube.set_vertices(self.shader)
 
         self.shader.set_solid_color(1.0, 0.0, 0.0)
-        self.model_matrix.push_matrix()
 
-        self.level.maze.walls[0].draw(self.model_matrix, self.shader, self.cube)
-        self.model_matrix.pop_matrix()
+        for wall in self.level.maze.walls:
+            self.model_matrix.push_matrix()
+            wall.draw(self.model_matrix, self.shader, self.cube)
+            self.model_matrix.pop_matrix()
 
         # Draw floor
         self.shader.set_solid_color(*self.level.floor.color)
