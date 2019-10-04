@@ -26,17 +26,22 @@ class Point:
     def __eq__(self, other):
         return self.x == other.x and self.y == other.y and self.z == other.z
 
-    def __floor__(self):
-        return Point(floor(self.x), floor(self.y), floor(self.z))
-
     def __gt__(self, other):
         return self.x > other.x and self.y > other.y and self.z > other.z
 
     def __lt__(self, other):
         return self.x < other.x and self.y < other.y and self.z < other.z
 
-    def to_list(self):
-        return [self.x, self.y, self.z]
+    def __iter__(self):
+        return (self.__getitem__(x) for x in range(3))
+
+    def __getitem__(self, item):
+        if item == 0 or item == "X":
+            return self.x
+        if item == 1 or item == "Y":
+            return self.y
+        if item == 2 or item == "Z":
+            return self.z
 
 
 class Vector:

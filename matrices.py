@@ -145,7 +145,6 @@ class ViewMatrix:
 
     def is_between(self, new_pos, drawable, offset):
         scale_x, scale_y, scale_z = drawable.scale
-        print(self.eye + new_pos)
         return Point(drawable.position.x - scale_x / 2 - offset,
                      drawable.position.y - scale_y / 2 - offset,
                      drawable.position.z - scale_z / 2 - offset) \

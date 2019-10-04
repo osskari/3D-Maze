@@ -83,8 +83,6 @@ class Maze3D:
         self.model_matrix.load_identity()
 
         # Draw stuff
-        if Point(9.0 - 2.5, 3.0 - 1.5, -2.0 - 3) < self.player.position < Point(9.0+2.5, 3.0+1.5, -2.0+3):
-            print(self.player.position)
 
         self.cube.set_vertices(self.shader)
 
@@ -98,7 +96,7 @@ class Maze3D:
         # Draw floor
         self.shader.set_solid_color(*self.level.floor.color)
         self.model_matrix.push_matrix()
-        self.model_matrix.add_translation(*self.level.floor.position.to_list())
+        self.model_matrix.add_translation(*self.level.floor.position)
         self.model_matrix.add_scale(*self.level.floor.scale)
         self.shader.set_model_matrix(self.model_matrix.matrix)
         self.cube.draw()
