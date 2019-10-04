@@ -17,36 +17,30 @@ class Maze3D:
         pygame.init()
         pygame.display.set_mode((800, 600), pygame.OPENGL | pygame.DOUBLEBUF)
 
-        self.shader = Shader3D()
-        self.shader.use()
+        self.game = Game(Shader3D(),
+                         ModelMatrix(),
+                         ViewMatrix(),
+                         ProjectionMatrix(),
+                         Player(Point(0, 3, 10), 10, pi, Point(0, 1, 0))
+                         )
 
-        self.model_matrix = ModelMatrix()
+        self.game.look()
+        self.game.set_perspective(pi/2, 800/600, 0.3, 100)
 
-        self.view_matrix = ViewMatrix()
-
-        self.player = Player(Point(0, 3, 10), 10, pi, Point(0, 1, 0))
-
-        self.view_matrix.look(self.player.position, self.player.looking_at, self.player.normal)
-
-        self.projection_matrix = ProjectionMatrix()
-        # self.projection_matrix.set_orthographic(-2, 2, -2, 2, 0.5, 10)
-        self.projection_matrix.set_perspective(pi/2, 800/600, 0.3, 100)
-        self.shader.set_projection_matrix(self.projection_matrix.get_matrix())
-
-        self.cube = Cube()
+        self.cube = Cube((0.8, 0.3, 0.3), (0.8, 0.3, 0.3), Point(9.0, 3.0, -2.0), (4, 5, 15), 13)
         self.sphere = Sphere()
-        self.level = Level(
-            Rectangle((0.0, 1.0, 0.0), Point(5.0, 0.0, 5.0), (100.0, 0.1, 100.0)),
-            Maze())
+        self.level = Level(Rectangle((0.0, 1.0, 0.0), Point(5.0, 0.0, 5.0), (100.0, 0.1, 100.0)), Maze())
         self.inputs = inputs
+
+        self.level.maze.lights.append(Light(self.game.player.position, (1.0, 1.0, 1.0)))
 
         self.clock = pygame.time.Clock()
         self.clock.tick()
 
         self.boxpos = [9.0, 3.0, -2.0]
         self.boxscale = (4, 5, 15)
-        self.level.maze.walls.append(Rectangle((1.0, 0.0, 0.0), Point(*self.boxpos), self.boxscale))
-        self.level.maze.walls.append(Rectangle((1.0, 0.0, 0.0), Point(3.0, 2.0, 3.0), (5.0, 5.0, 5.0)))
+        # self.level.maze.walls.append(Rectangle((1.0, 0.0, 0.0), Point(*self.boxpos), self.boxscale))
+        # self.level.maze.walls.append(Rectangle((1.0, 0.0, 0.0), Point(3.0, 2.0, 3.0), (5.0, 5.0, 5.0)))
 
         self.angle = 0
 
@@ -58,18 +52,19 @@ class Maze3D:
             self.angle -= (2 * pi)
 
         if self.inputs["W"]:
-            newpos = self.view_matrix.slide(0, 0, -self.player.speed * delta_time)
-            if not self.level.collision(newpos, 0.5, self.view_matrix):
-                self.view_matrix.eye += newpos
+            newpos = self.game.view_matrix.slide(0, 0, -self.game.player.speed * delta_time)
+            if not self.level.collision(newpos, 0.5, self.game.view_matrix):
+                self.game.view_matrix.eye += newpos
         if self.inputs["S"]:
-            newpos = self.view_matrix.slide(0, 0, self.player.speed * delta_time)
-            if not self.level.collision(newpos, 0.5, self.view_matrix):
-                self.view_matrix.eye += newpos
+            newpos = self.game.view_matrix.slide(0, 0, self.game.player.speed * delta_time)
+            if not self.level.collision(newpos, 0.5, self.game.view_matrix):
+                self.game.view_matrix.eye += newpos
         if self.inputs["A"]:
-            self.view_matrix.yaw(-self.player.rotationSpeed * delta_time)
+            self.game.view_matrix.yaw(-self.game.player.rotationSpeed * delta_time)
         if self.inputs["D"]:
-            self.view_matrix.yaw(self.player.rotationSpeed * delta_time)
-        self.player.position = self.view_matrix.eye
+            self.game.view_matrix.yaw(self.game.player.rotationSpeed * delta_time)
+        self.game.player.position = self.game.view_matrix.eye
+        self.level.maze.lights[0].position = self.game.view_matrix.eye
 
     def display(self):
         glEnable(GL_DEPTH_TEST)
@@ -79,25 +74,28 @@ class Maze3D:
 
         glViewport(0, 0, 800, 600)
 
-        self.shader.set_view_matrix(self.view_matrix.get_matrix())
+        self.game.shader.set_view_matrix(self.game.view_matrix.get_matrix())
 
-        self.shader.set_light_position(*self.view_matrix.eye)
-        self.shader.set_light_color(1, 1, 1)
+        self.game.shader.set_light_position(*self.level.maze.lights[0].position)
+        self.game.shader.set_light_color(*self.level.maze.lights[0].diffuse)
 
-        self.model_matrix.load_identity()
+        self.game.model_matrix.load_identity()
 
         # Draw stuff
 
-        self.cube.set_vertices(self.shader)
+        self.cube.set_vertices(self.game.shader)
 
-        self.shader.set_material_diffuse(0.9, 0.3, 0.3)
-        self.shader.set_material_specular(0.9, 0.7, 0.7)
-        self.shader.set_material_shininess(13)
-
-        for wall in self.level.maze.walls:
-            self.model_matrix.push_matrix()
-            wall.draw(self.model_matrix, self.shader, self.cube)
-            self.model_matrix.pop_matrix()
+        # self.game.shader.set_material_diffuse(0.9, 0.3, 0.3)
+        # self.game.shader.set_material_specular(0.9, 0.7, 0.7)
+        # self.game.shader.set_material_shininess(13)
+        self.cube.set_color(self.game.shader)
+        self.game.model_matrix.push_matrix()
+        self.cube.draw(self.game.model_matrix, self.game.shader)
+        self.game.model_matrix.pop_matrix()
+        # for wall in self.level.maze.walls:
+        #     self.game.model_matrix.push_matrix()
+        #     wall.draw(self.game.model_matrix, self.game.shader, self.cube)
+        #     self.game.model_matrix.pop_matrix()
 
         # # Draw floor
         # self.shader.set_material_diffuse(1.0, 0.0, 0.0)
