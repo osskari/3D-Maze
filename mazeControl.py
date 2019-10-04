@@ -30,8 +30,8 @@ class Maze3D:
         self.floor = Cube((0.01, 0.3, 0.01),
                          (0.1, 0.8, 0.3),
                          (0.3, 0.7, 0.2),
-                         Point(2.0, 2.0, 2.0),
-                         (50, 2, 50),
+                         Point(-50, 0, -50),
+                         (100, 0.1, 100),
                          18)
         self.sun = Sphere((1.0, 0.4, 0.3),
                           (0.8, 0.7, 0.1),
@@ -40,8 +40,11 @@ class Maze3D:
                           (5, 5, 5),
                           100)
 
+        wall_size = 8
         self.inputs = inputs
-        self.game.maze.walls.append(self.cube)
+        # self.game.maze.walls.append(self.cube)
+        self.game.maze.create_walls(self.cube.ambient, self.cube.diffuse, self.cube.specular)
+
         # self.game.maze.walls.append(self.)
         self.game.maze.lights.append(Light(self.game.player.position, (1.0, 1.0, 1.0)))
 
@@ -114,8 +117,9 @@ class Maze3D:
         self.game.shader.set_light_position(*self.sun.position)
         self.game.shader.set_light_color(0.5, 0.5, 0.5)
 
+        self.game.maze.walls[0].set_vertices(self.game.shader)
         for wall in self.game.maze.walls:
-            wall.set_vertices(self.game.shader)
+            # wall.set_vertices(self.game.shader)
             wall.set_color(self.game.shader)
             self.game.model_matrix.push_matrix()
             wall.draw(self.game.model_matrix, self.game.shader)
