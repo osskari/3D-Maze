@@ -125,6 +125,7 @@ class Player:
 
 class Maze:
     def __init__(self):
+        self.floor = Cube((0.15, 0.1, 0.1), (0.9, 0.6, 0.5), (0.7, 0.4, 0.4), Point(0, -0.1, 0), (100, 0.1, 100), 15)
         self.walls = []
         self.lights = []
 

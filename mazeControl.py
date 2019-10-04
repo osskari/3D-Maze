@@ -92,6 +92,13 @@ class Maze3D:
             wall.draw(self.game.model_matrix, self.game.shader)
             self.game.model_matrix.pop_matrix()
 
+        # Draw floor
+        self.game.maze.floor.set_vertices(self.game.shader)
+        self.game.maze.floor.set_color(self.game.shader)
+        self.game.model_matrix.push_matrix()
+        self.game.maze.floor.draw(self.game.model_matrix, self.game.shader)
+        self.game.model_matrix.pop_matrix()
+
         pygame.display.flip()
 
     def events(self, exiting):

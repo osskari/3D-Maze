@@ -7,6 +7,7 @@ uniform vec4 u_mat_diffuse;
 
 uniform vec4 u_light_specular;
 uniform vec4 u_mat_specular;
+
 uniform float u_mat_shininess;
 
 varying vec4 v_normal;
