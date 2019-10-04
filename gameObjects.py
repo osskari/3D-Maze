@@ -4,7 +4,7 @@ from shaders import *
 
 class Cube(Drawable):
     def __init__(self, ambient, diffuse, specular, position, scale, shininess):
-        Drawable.__init__(self, ambient, diffuse, specular, position, scale, shininess)
+        Drawable.__init__(self, ambient, diffuse, specular, position, scale, shininess, 0.5)
         self.position_array = [-0.5, -0.5, -0.5,
                                -0.5, 0.5, -0.5,
                                0.5, 0.5, -0.5,
@@ -63,7 +63,7 @@ class Cube(Drawable):
 
 class Sphere(Drawable):
     def __init__(self, ambient, diffuse, specular, position, scale, shininess, stacks=12, slices=24):
-        Drawable.__init__(self, ambient, diffuse, specular, position, scale, shininess)
+        Drawable.__init__(self, ambient, diffuse, specular, position, scale, shininess, 3)
         self.vertex_array = []
         self.slices = slices
 
@@ -128,9 +128,9 @@ class Maze:
         self.walls = []
         self.lights = []
 
-    def collision(self, new_pos, offset, matrix):
+    def collision(self, new_pos, matrix):
         for wall in self.walls:
-            if matrix.is_between(new_pos, wall, offset):
+            if matrix.is_between(new_pos, wall):
                 return wall
         return None
 

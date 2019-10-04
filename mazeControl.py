@@ -54,11 +54,11 @@ class Maze3D:
 
         if self.inputs["W"]:
             newpos = self.game.view_matrix.slide(0, 0, -self.game.player.speed * delta_time)
-            if not self.game.maze.collision(newpos, 0.5, self.game.view_matrix):
+            if not self.game.maze.collision(newpos, self.game.view_matrix):
                 self.game.view_matrix.eye += newpos
         if self.inputs["S"]:
             newpos = self.game.view_matrix.slide(0, 0, self.game.player.speed * delta_time)
-            if not self.game.maze.collision(newpos, 0.5, self.game.view_matrix):
+            if not self.game.maze.collision(newpos, self.game.view_matrix):
                 self.game.view_matrix.eye += newpos
         if self.inputs["A"]:
             self.game.view_matrix.yaw(-self.game.player.rotationSpeed * delta_time)
@@ -91,20 +91,6 @@ class Maze3D:
             self.game.model_matrix.push_matrix()
             wall.draw(self.game.model_matrix, self.game.shader)
             self.game.model_matrix.pop_matrix()
-
-        # # Draw cube
-        # self.cube.set_vertices(self.game.shader)
-        # self.cube.set_color(self.game.shader)
-        # self.game.model_matrix.push_matrix()
-        # self.cube.draw(self.game.model_matrix, self.game.shader)
-        # self.game.model_matrix.pop_matrix()
-
-        # # Draw sphere
-        # self.sphere.set_vertices(self.game.shader)
-        # self.sphere.set_color(self.game.shader)
-        # self.game.model_matrix.push_matrix()
-        # self.sphere.draw(self.game.model_matrix, self.game.shader)
-        # self.game.model_matrix.pop_matrix()
 
         pygame.display.flip()
 

@@ -9,7 +9,7 @@ from math import *
 
 
 class Drawable:
-    def __init__(self, ambient, diffuse, specular, position, scale, shininess):
+    def __init__(self, ambient, diffuse, specular, position, scale, shininess, offset):
         self.ambient = ambient
         self.diffuse = diffuse
         self.specular = specular
@@ -18,6 +18,7 @@ class Drawable:
         self.shininess = shininess
         self.position_array = None
         self.normal_array = None
+        self.offset = offset
 
     def set_vertices(self, shader):
         shader.set_position_attribute(self.position_array)
