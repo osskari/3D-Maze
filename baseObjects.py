@@ -9,7 +9,8 @@ from math import *
 
 
 class Drawable:
-    def __init__(self, diffuse, specular, position, scale, shininess):
+    def __init__(self, ambient, diffuse, specular, position, scale, shininess):
+        self.ambient = ambient
         self.diffuse = diffuse
         self.specular = specular
         self.position = position
@@ -23,6 +24,7 @@ class Drawable:
         shader.set_normal_attribute(self.normal_array)
 
     def set_color(self, shader):
+        shader.set_material_ambient(*self.ambient)
         shader.set_material_diffuse(*self.diffuse)
         shader.set_material_specular(*self.specular)
         shader.set_material_shininess(self.shininess)

@@ -22,8 +22,20 @@ class Maze3D:
         self.game.look()
         self.game.set_perspective(pi/2, 800/600, 0.3, 100)
 
-        self.cube = Cube((0.8, 0.3, 0.3), (0.8, 0.3, 0.3), Point(9.0, 3.0, -2.0), (4, 5, 15), 13)
-        self.sphere = Sphere((0.9, 0.4, 0.6), (0.9, 0.5, 0.6), Point(0, 3, 2), (5, 5, 5), 17)
+        self.cube = Cube((0.1, 0.01, 0.01),
+                         (0.6, 0.6, 0.6),
+                         (0.9, 0.5, 0.2),
+                         Point(9.0, 3.0, -2.0),
+                         (4, 5, 15),
+                         13
+                         )
+        self.sphere = Sphere((0.3, 0.3, 0.3),
+                             (0.7, 0.5, 0.4),
+                             (0.9, 0.8, 0.5),
+                             Point(0, 3, 2),
+                             (5, 5, 5),
+                             17
+                             )
         self.inputs = inputs
 
         self.game.maze.lights.append(Light(self.game.player.position, (1.0, 1.0, 1.0)))
