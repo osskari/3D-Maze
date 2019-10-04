@@ -1,3 +1,7 @@
+uniform vec4 u_global_ambient;
+uniform vec4 u_light_ambient;
+uniform vec4 u_mat_ambient;
+
 uniform vec4 u_light_diffuse;
 uniform vec4 u_mat_diffuse;
 
@@ -14,5 +18,9 @@ void main(void)
 	float lambert = max(dot(v_normal, v_s), 0);
 	float phong = max(dot(v_normal, v_h), 0);
 
-    gl_FragColor = lambert * u_light_diffuse * u_mat_diffuse + u_light_specular * u_mat_specular * pow(phong, u_mat_shininess);
+    vec4 i = u_light_ambient * u_mat_ambient
+                   + lambert * u_light_diffuse * u_mat_diffuse
+                   + u_light_specular * u_mat_specular * pow(phong, u_mat_shininess);
+
+    gl_FragColor = u_global_ambient * u_mat_ambient + i;
 }

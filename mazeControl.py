@@ -22,13 +22,19 @@ class Maze3D:
         self.game.look()
         self.game.set_perspective(pi/2, 800/600, 0.3, 100)
 
-        self.cube = Cube((0.8, 0.3, 0.3), (0.8, 0.3, 0.3), Point(9.0, 3.0, -2.0), (4, 5, 15), 13)
-        self.sun = Sphere(
-            (1.0, 1.0, 0.1),
-            (0.9, 0.5, 0.6),
-            Point(0, 30, 2),
-            (5, 5, 5),
-            100)
+        self.cube = Cube((0.1, 0.01, 0.01),
+                         (0.6, 0.6, 0.6),
+                         (0.9, 0.5, 0.2),
+                         Point(9.0, 3.0, -2.0),
+                         (4, 5, 15),
+                         13)
+        self.sun = Sphere((1.0, 0.3, 0.3),
+                          (0.8, 0.7, 0.1),
+                          (0.9, 0.2, 0.2),
+                          Point(0, 0, 2),
+                          (5, 5, 5),
+                          100)
+
         self.inputs = inputs
 
         self.game.maze.lights.append(Light(self.game.player.position, (1.0, 1.0, 1.0)))
@@ -90,9 +96,11 @@ class Maze3D:
         self.game.model_matrix.pop_matrix()
 
         # Draw sphere
+
         self.sun.set_vertices(self.game.shader)
         self.sun.set_color(self.game.shader)
         self.game.model_matrix.push_matrix()
+        self.sun.set_position(Point(0, cos(self.angle)/3, sin(self.angle)/3))
         self.sun.draw(self.game.model_matrix, self.game.shader)
         self.game.model_matrix.pop_matrix()
 

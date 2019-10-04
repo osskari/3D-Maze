@@ -3,8 +3,8 @@ from shaders import *
 
 
 class Cube(Drawable):
-    def __init__(self, diffuse, specular, position, scale, shininess):
-        Drawable.__init__(self, diffuse, specular, position, scale, shininess)
+    def __init__(self, ambient, diffuse, specular, position, scale, shininess):
+        Drawable.__init__(self, ambient, diffuse, specular, position, scale, shininess)
         self.position_array = [-0.5, -0.5, -0.5,
                                -0.5, 0.5, -0.5,
                                0.5, 0.5, -0.5,
@@ -62,8 +62,8 @@ class Cube(Drawable):
 
 
 class Sphere(Drawable):
-    def __init__(self, diffuse, specular, position, scale, shininess, stacks=12, slices=24):
-        Drawable.__init__(self, diffuse, specular, position, scale, shininess)
+    def __init__(self, ambient, diffuse, specular, position, scale, shininess, stacks=12, slices=24):
+        Drawable.__init__(self, ambient, diffuse, specular, position, scale, shininess)
         self.vertex_array = []
         self.slices = slices
 
@@ -88,7 +88,7 @@ class Sphere(Drawable):
         self.normal_array = self.vertex_array
 
     def set_position(self, new_position):
-        self.position = new_position
+        self.position += new_position
 
     def draw(self, model_matrix, shader):
         super(Sphere, self).draw(model_matrix, shader)
