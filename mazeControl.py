@@ -19,34 +19,44 @@ class Maze3D:
         self.game = Game(Player(Point(0, 3, 10), 10, pi, Point(0, 1, 0)))
 
         self.game.look()
-        self.game.set_perspective(pi/2, 800/600, 0.3, 100)
+        self.game.set_perspective(pi/2, 800/600, 0.3, 300)
 
         self.cube = Cube((0.1, 0.01, 0.01),
                          (0.6, 0.6, 0.6),
                          (0.9, 0.5, 0.2),
-                         Point(9.0, 3.0, -2.0),
+                         Point(9.0, 2.0, -2.0),
                          (4, 5, 15),
-                         13
-                         )
-        self.sphere = Sphere((0.3, 0.3, 0.3),
-                             (0.7, 0.5, 0.4),
-                             (0.9, 0.8, 0.5),
-                             Point(0, 3, 2),
-                             (5, 5, 5),
-                             17
-                             )
+                         13)
+        self.floor = Cube((0.01, 0.3, 0.01),
+                         (0.1, 0.8, 0.3),
+                         (0.3, 0.7, 0.2),
+                         Point(2.0, 2.0, 2.0),
+                         (50, 2, 50),
+                         18)
+        self.sun = Sphere((1.0, 0.4, 0.3),
+                          (0.8, 0.7, 0.1),
+                          (0.9, 0.2, 0.2),
+                          Point(0, pi, pi),
+                          (5, 5, 5),
+                          100)
+
         self.inputs = inputs
         self.game.maze.walls.append(self.cube)
-        self.game.maze.walls.append(self.sphere)
+        # self.game.maze.walls.append(self.)
         self.game.maze.lights.append(Light(self.game.player.position, (1.0, 1.0, 1.0)))
 
         self.clock = pygame.time.Clock()
         self.clock.tick()
 
         self.angle = 0
+        self.sun_angle = 0
 
     def update(self):
         delta_time = self.clock.tick() / 1000.0
+
+        self.sun_angle += (pi/2) * delta_time
+        if self.sun_angle > 20 * pi:
+            self.sun_angle = 0
 
         self.angle += pi * delta_time
         if self.angle > 2 * pi:
@@ -64,6 +74,15 @@ class Maze3D:
             self.game.view_matrix.yaw(-self.game.player.rotationSpeed * delta_time)
         if self.inputs["D"]:
             self.game.view_matrix.yaw(self.game.player.rotationSpeed * delta_time)
+        if self.inputs["LEFT"]:
+            self.game.view_matrix.yaw(-self.game.player.rotationSpeed * delta_time)
+        if self.inputs["RIGHT"]:
+            self.game.view_matrix.yaw(self.game.player.rotationSpeed * delta_time)
+        if self.inputs["DOWN"]:
+            self.game.view_matrix.pitch(self.game.player.rotationSpeed * delta_time)
+        if self.inputs["UP"]:
+            self.game.view_matrix.pitch(-self.game.player.rotationSpeed * delta_time)
+
         self.game.player.position = self.game.view_matrix.eye
         self.game.maze.lights[0].position = self.game.view_matrix.eye
 
@@ -84,7 +103,17 @@ class Maze3D:
 
         # Draw stuff
 
-        # Draw walls
+        # Draw sphere
+        self.sun.set_vertices(self.game.shader)
+        self.sun.set_color(self.game.shader)
+        self.game.model_matrix.push_matrix()
+        self.sun.set_position(Point(0, -sin(self.sun_angle/10) * 100, cos(self.sun_angle/10) * 100))
+        self.sun.draw(self.game.model_matrix, self.game.shader)
+        self.game.model_matrix.pop_matrix()
+
+        self.game.shader.set_light_position(*self.sun.position)
+        self.game.shader.set_light_color(0.5, 0.5, 0.5)
+
         for wall in self.game.maze.walls:
             wall.set_vertices(self.game.shader)
             wall.set_color(self.game.shader)
@@ -92,11 +121,12 @@ class Maze3D:
             wall.draw(self.game.model_matrix, self.game.shader)
             self.game.model_matrix.pop_matrix()
 
+
         # Draw floor
-        self.game.maze.floor.set_vertices(self.game.shader)
-        self.game.maze.floor.set_color(self.game.shader)
+        self.floor.set_vertices(self.game.shader)
+        self.floor.set_color(self.game.shader)
         self.game.model_matrix.push_matrix()
-        self.game.maze.floor.draw(self.game.model_matrix, self.game.shader)
+        self.floor.draw(self.game.model_matrix, self.game.shader)
         self.game.model_matrix.pop_matrix()
 
         pygame.display.flip()
@@ -119,6 +149,14 @@ class Maze3D:
                     self.inputs["A"] = True
                 if event.key == K_d:
                     self.inputs["D"] = True
+                if event.key == K_UP:
+                    self.inputs["UP"] = True
+                if event.key == K_DOWN:
+                    self.inputs["DOWN"] = True
+                if event.key == K_RIGHT:
+                    self.inputs["RIGHT"] = True
+                if event.key == K_LEFT:
+                    self.inputs["LEFT"] = True
             elif event.type == pygame.KEYUP:
                 if event.key == K_w:
                     self.inputs["W"] = False
@@ -128,6 +166,14 @@ class Maze3D:
                     self.inputs["A"] = False
                 if event.key == K_d:
                     self.inputs["D"] = False
+                if event.key == K_UP:
+                    self.inputs["UP"] = False
+                if event.key == K_DOWN:
+                    self.inputs["DOWN"] = False
+                if event.key == K_RIGHT:
+                    self.inputs["RIGHT"] = False
+                if event.key == K_LEFT:
+                    self.inputs["LEFT"] = False
         return ret_val
 
     def program_loop(self):
