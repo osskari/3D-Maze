@@ -98,6 +98,7 @@ class Game:
     def __init__(self, player):
         self.shader = Shader3D()
         self.shader.use()
+        self.shader.set_global_ambient(1, 1, 1)
         self.model_matrix = ModelMatrix()
         self.view_matrix = ViewMatrix()
         self.player = player
@@ -135,9 +136,11 @@ class Maze:
 
 
 class Light:
-    def __init__(self, position, diffuse, specular=None):
+    def __init__(self, position, ambient, diffuse=None, specular=None):
         self.position = position
-        self.diffuse = diffuse
+        self.ambient = ambient
+        # If only ambient is provided then diff and spec are the same
+        self.diffuse = diffuse if diffuse else ambient
         self.specular = specular if specular else diffuse
 
 

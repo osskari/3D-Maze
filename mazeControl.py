@@ -13,7 +13,6 @@ from gameObjects import *
 
 class Maze3D:
     def __init__(self):
-
         pygame.init()
         pygame.display.set_mode((800, 600), pygame.OPENGL | pygame.DOUBLEBUF)
 
@@ -37,16 +36,12 @@ class Maze3D:
                              17
                              )
         self.inputs = inputs
-
+        self.game.maze.walls.append(self.cube)
+        self.game.maze.walls.append(self.sphere)
         self.game.maze.lights.append(Light(self.game.player.position, (1.0, 1.0, 1.0)))
 
         self.clock = pygame.time.Clock()
         self.clock.tick()
-
-        self.boxpos = [9.0, 3.0, -2.0]
-        self.boxscale = (4, 5, 15)
-        # self.level.maze.walls.append(Rectangle((1.0, 0.0, 0.0), Point(*self.boxpos), self.boxscale))
-        # self.level.maze.walls.append(Rectangle((1.0, 0.0, 0.0), Point(3.0, 2.0, 3.0), (5.0, 5.0, 5.0)))
 
         self.angle = 0
 
@@ -83,25 +78,33 @@ class Maze3D:
         self.game.shader.set_view_matrix(self.game.view_matrix.get_matrix())
 
         self.game.shader.set_light_position(*self.game.maze.lights[0].position)
-        self.game.shader.set_light_color(*self.game.maze.lights[0].diffuse)
+        self.game.shader.set_light_color(*self.game.maze.lights[0].ambient)
 
         self.game.model_matrix.load_identity()
 
         # Draw stuff
 
-        # Draw cube
-        self.cube.set_vertices(self.game.shader)
-        self.cube.set_color(self.game.shader)
-        self.game.model_matrix.push_matrix()
-        self.cube.draw(self.game.model_matrix, self.game.shader)
-        self.game.model_matrix.pop_matrix()
+        # Draw walls
+        for wall in self.game.maze.walls:
+            wall.set_vertices(self.game.shader)
+            wall.set_color(self.game.shader)
+            self.game.model_matrix.push_matrix()
+            wall.draw(self.game.model_matrix, self.game.shader)
+            self.game.model_matrix.pop_matrix()
 
-        # Draw sphere
-        self.sphere.set_vertices(self.game.shader)
-        self.sphere.set_color(self.game.shader)
-        self.game.model_matrix.push_matrix()
-        self.sphere.draw(self.game.model_matrix, self.game.shader)
-        self.game.model_matrix.pop_matrix()
+        # # Draw cube
+        # self.cube.set_vertices(self.game.shader)
+        # self.cube.set_color(self.game.shader)
+        # self.game.model_matrix.push_matrix()
+        # self.cube.draw(self.game.model_matrix, self.game.shader)
+        # self.game.model_matrix.pop_matrix()
+
+        # # Draw sphere
+        # self.sphere.set_vertices(self.game.shader)
+        # self.sphere.set_color(self.game.shader)
+        # self.game.model_matrix.push_matrix()
+        # self.sphere.draw(self.game.model_matrix, self.game.shader)
+        # self.game.model_matrix.pop_matrix()
 
         pygame.display.flip()
 
