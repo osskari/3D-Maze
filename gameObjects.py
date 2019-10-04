@@ -88,7 +88,7 @@ class Sphere(Drawable):
         self.normal_array = self.vertex_array
 
     def set_position(self, new_position):
-        self.position += new_position
+        self.position = new_position
 
     def draw(self, model_matrix, shader):
         super(Sphere, self).draw(model_matrix, shader)
@@ -148,5 +148,9 @@ inputs = {
             "W": False,  # Walk forward
             "A": False,  # Turn left
             "S": False,  # Walk backwards
-            "D": False   # Turn right
+            "D": False,   # Turn right
+            "UP": False,  # Turn up
+            "DOWN": False,   # Turn down
+            "LEFT": False,   # Turn left
+            "RIGHT": False   # Turn right
         }
