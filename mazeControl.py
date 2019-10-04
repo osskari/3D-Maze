@@ -34,6 +34,7 @@ class Maze3D:
         self.shader.set_projection_matrix(self.projection_matrix.get_matrix())
 
         self.cube = Cube()
+        self.sphere = Sphere()
         self.level = Level(
             Rectangle((0.0, 1.0, 0.0), Point(5.0, 0.0, 5.0), (100.0, 0.1, 100.0)),
             Maze())
@@ -100,6 +101,15 @@ class Maze3D:
         self.model_matrix.add_scale(*self.level.floor.scale)
         self.shader.set_model_matrix(self.model_matrix.matrix)
         self.cube.draw()
+        self.model_matrix.pop_matrix()
+
+        self.sphere.set_vertices(self.shader)
+        self.shader.set_solid_color(0.0, 0.0, 1.0)
+        self.model_matrix.push_matrix()
+        self.model_matrix.add_translation(10, 10, 10)
+        self.model_matrix.add_scale(10, 10, 10)
+        self.shader.set_model_matrix(self.model_matrix.matrix)
+        self.sphere.draw()
         self.model_matrix.pop_matrix()
 
         pygame.display.flip()
