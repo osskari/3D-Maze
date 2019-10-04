@@ -81,36 +81,43 @@ class Maze3D:
 
         self.shader.set_view_matrix(self.view_matrix.get_matrix())
 
+        self.shader.set_light_position(*self.view_matrix.eye)
+        self.shader.set_light_color(1, 1, 1)
+
         self.model_matrix.load_identity()
 
         # Draw stuff
 
         self.cube.set_vertices(self.shader)
 
-        self.shader.set_solid_color(1.0, 0.0, 0.0)
+        self.shader.set_material_diffuse(0.9, 0.3, 0.3)
+        self.shader.set_material_specular(0.9, 0.7, 0.7)
+        self.shader.set_material_shininess(13)
 
         for wall in self.level.maze.walls:
             self.model_matrix.push_matrix()
             wall.draw(self.model_matrix, self.shader, self.cube)
             self.model_matrix.pop_matrix()
 
-        # Draw floor
-        self.shader.set_solid_color(*self.level.floor.color)
-        self.model_matrix.push_matrix()
-        self.model_matrix.add_translation(*self.level.floor.position)
-        self.model_matrix.add_scale(*self.level.floor.scale)
-        self.shader.set_model_matrix(self.model_matrix.matrix)
-        self.cube.draw()
-        self.model_matrix.pop_matrix()
-
-        self.sphere.set_vertices(self.shader)
-        self.shader.set_solid_color(0.0, 0.0, 1.0)
-        self.model_matrix.push_matrix()
-        self.model_matrix.add_translation(10, 10, 10)
-        self.model_matrix.add_scale(10, 10, 10)
-        self.shader.set_model_matrix(self.model_matrix.matrix)
-        self.sphere.draw()
-        self.model_matrix.pop_matrix()
+        # # Draw floor
+        # self.shader.set_material_diffuse(1.0, 0.0, 0.0)
+        # self.shader.set_material_specular(0.9, 0.3, 0.2)
+        # self.shader.set_material_shininess(13)
+        # self.model_matrix.push_matrix()
+        # self.model_matrix.add_translation(*self.level.floor.position)
+        # self.model_matrix.add_scale(*self.level.floor.scale)
+        # self.shader.set_model_matrix(self.model_matrix.matrix)
+        # self.cube.draw()
+        # self.model_matrix.pop_matrix()
+        #
+        # self.sphere.set_vertices(self.shader)
+        # self.shader.set_solid_color(0.0, 0.0, 1.0)
+        # self.model_matrix.push_matrix()
+        # self.model_matrix.add_translation(10, 10, 10)
+        # self.model_matrix.add_scale(10, 10, 10)
+        # self.shader.set_model_matrix(self.model_matrix.matrix)
+        # self.sphere.draw()
+        # self.model_matrix.pop_matrix()
 
         pygame.display.flip()
 

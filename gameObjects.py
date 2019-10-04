@@ -22,7 +22,7 @@ class Rectangle(Drawable):
         Drawable.__init__(self, color, position, scale)
 
     def draw(self, model_matrix, shader, cube):
-        shader.set_solid_color(*self.color)
+        # shader.set_solid_color(*self.color)
         model_matrix.add_translation(*self.position)
         # model_matrix.push_matrix()
         model_matrix.add_scale(*self.scale)
