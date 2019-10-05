@@ -92,6 +92,24 @@ class Vector:
     def __len__(self):
         return sqrt(self.x * self.x + self.y * self.y + self.z * self.z)
 
+    def __eq__(self, other):
+        return self.x == other.x and self.y == other.y and self.z == other.z
+
+    def __getitem__(self, item):
+        if item == 0 or item == "X":
+            return self.x
+        if item == 1 or item == "Y":
+            return self.y
+        if item == 2 or item == "Z":
+            return self.y
+
+    def __iter__(self):
+        return (self.__getitem__(x) for x in range(3))
+
+    def __str__(self):
+        return "(" + str(self.x) + ", " + str(self.y) + ", " + str(self.z) + ")"
+
+
     def normalize(self):
         length = self.__len__()
         self.x /= length

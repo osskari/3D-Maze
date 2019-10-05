@@ -128,7 +128,7 @@ class Player:
 
 class Maze:
     def __init__(self):
-        self.floor = Cube((0.15, 0.1, 0.1), (0.9, 0.6, 0.5), (0.7, 0.4, 0.4), Point(0, -0.1, 0), (100, 0.1, 100), 15)
+        self.floor = Cube((0.01, 0.3, 0.01), (0.1, 0.8, 0.3), (0.3, 0.7, 0.2), Point(-50, 0, -50), (100, 0.1, 100), 18)
         self.walls = []
         self.lights = []
 
@@ -138,9 +138,12 @@ class Maze:
                 return wall
         return None
 
+    # creates walls of maze by reading array of walls
     def create_walls(self, ambient, diffuse, specular):
+        # Height of the walls
         wall_size = 8
-        grid_unit = 5
+        # Width of hallways
+        grid_unit = 100/20
         # Borders
         # Vertical
         self.walls.append(Cube(ambient, diffuse, specular, Point(-50, wall_size / 2, -0), (100, wall_size, 0.1), 15))
@@ -149,7 +152,7 @@ class Maze:
         self.walls.append(Cube(ambient, diffuse, specular, Point(-100, wall_size / 2, -50), (0.1, wall_size, 100), 15))
         self.walls.append(Cube(ambient, diffuse, specular, Point(-0, wall_size / 2, -50), (0.1, wall_size, 100), 15))
         # Inside walls
-        for wall in verticals:
+        for wall in inside_walls:
             if wall[3] == "VERTICAL":
                 self.walls.append(Cube(ambient, diffuse, specular, Point(-wall[1]*grid_unit, wall_size / 2, -wall[0]*grid_unit), (wall[2]*grid_unit, wall_size, 0.1), 15))
             elif wall[3] == "HORIZONTAL":
@@ -175,8 +178,9 @@ inputs = {
             "LEFT": False,   # Turn left
             "RIGHT": False   # Turn right
         }
+
 # (grid_x, grid_y, length, direction)
-verticals = [
+inside_walls = [
     (1, 5.5, 5, "VERTICAL"),
     (1, 14, 10, "VERTICAL"),
     (2, 3.5, 1, "VERTICAL"),
