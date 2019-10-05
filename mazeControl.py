@@ -1,13 +1,6 @@
-from math import *
-
 import pygame
 from pygame.locals import *
 
-import sys
-import time
-
-from shaders import *
-from matrices import *
 from gameObjects import *
 
 
@@ -21,18 +14,6 @@ class Maze3D:
         self.game.look()
         self.game.set_perspective(pi/2, 800/600, 0.3, 300)
 
-        # self.cube = Cube((0.1, 0.01, 0.01),
-        #                  (0.6, 0.6, 0.6),
-        #                  (0.9, 0.5, 0.2),
-        #                  Point(9.0, 2.0, -2.0),
-        #                  (4, 5, 15),
-        #                  13)
-        # self.floor = Cube((0.01, 0.3, 0.01),
-        #                  (0.1, 0.8, 0.3),
-        #                  (0.3, 0.7, 0.2),
-        #                  Point(-50, 0, -50),
-        #                  (100, 0.1, 100),
-        #                  18)
         self.sun = Sphere((1.0, 0.4, 0.3),
                           (0.8, 0.7, 0.1),
                           (0.9, 0.2, 0.2),
@@ -40,12 +21,9 @@ class Maze3D:
                           (5, 5, 5),
                           100)
 
-        wall_size = 8
         self.inputs = inputs
-        # self.game.maze.walls.append(self.cube)
         self.game.maze.create_walls((0.1, 0.01, 0.01), (0.6, 0.6, 0.6), (0.9, 0.5, 0.2))
 
-        # self.game.maze.walls.append(self.)
         self.game.maze.lights.append(Light(self.game.player.position, (1.0, 1.0, 1.0)))
 
         self.clock = pygame.time.Clock()
@@ -66,56 +44,19 @@ class Maze3D:
             self.angle -= (2 * pi)
 
         if self.inputs["W"]:
-            newpos = self.game.view_matrix.slide(0, 0, -self.game.player.speed * delta_time)
-            collision_wall = self.game.maze.collision(newpos, self.game.view_matrix)
+            new_pos = self.game.view_matrix.slide(0, 0, -self.game.player.speed * delta_time)
+            collision_wall = self.game.maze.collision(new_pos, self.game.view_matrix)
             if not collision_wall:
-                self.game.view_matrix.eye += newpos
+                self.game.view_matrix.eye += new_pos
             else:
-                # slide
-                p0 = self.game.view_matrix.eye
-                p1 = p0 + newpos
-                line_vector = collision_wall.scale
-                # print(line_vector)
-                if line_vector[0] > line_vector[2]:
-                    line_vector = Vector(1, 0, 0)
-                else:
-                    line_vector = Vector(0, 0, 1)
-
-                p2 = (line_vector * (p1-p0).dot(line_vector))+p0
-                print(p2)
-                self.game.view_matrix.eye = p2
-                #
-                # upper = newpos.dot(Vector(line_vector[0], line_vector[1], line_vector[2]))
-                # lower = sqrt(pow(newpos.x, 2) + pow(newpos.y, 2) + pow(newpos.z, 2))
-                #
-                # distance = upper/lower
-                #
-                # line_vector = Vector(line_vector[2], 0, line_vector[0])
-                #
-                # direction_vector = self.game.view_matrix.eye + newpos
-                # direction_vector.y = 0
-                # # print("direction", type(direction_vector))
-                #
-                # # print("line_vector", type(line_vector))
-                # # print("distance", type(distance))
-                # thing = line_vector * distance
-                # print("thing", thing)
-                # if thing != Vector(0, 0, 0):
-                #     thing.normalize()
-                #     print("direction ", direction_vector)
-                #     direction_vector.normalize()
-                #     print(self.game.view_matrix.eye + direction_vector - thing)
-                #
-                #     self.game.view_matrix.eye += (direction_vector - thing)* delta_time
-
+                self.game.view_matrix.eye += self.game.maze.slide(self.game.view_matrix.eye, new_pos, collision_wall)
         if self.inputs["S"]:
-            newpos = self.game.view_matrix.slide(0, 0, self.game.player.speed * delta_time)
-            if not self.game.maze.collision(newpos, self.game.view_matrix):
-                self.game.view_matrix.eye += newpos
+            new_pos = self.game.view_matrix.slide(0, 0, self.game.player.speed * delta_time)
+            collision_wall = self.game.maze.collision(new_pos, self.game.view_matrix)
+            if not collision_wall:
+                self.game.view_matrix.eye += new_pos
             else:
-                # slide
-                print("slide")
-                pass
+                self.game.view_matrix.eye += self.game.maze.slide(self.game.view_matrix.eye, new_pos, collision_wall)
         if self.inputs["A"]:
             self.game.view_matrix.yaw(-self.game.player.rotationSpeed * delta_time)
         if self.inputs["D"]:

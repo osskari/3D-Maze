@@ -132,11 +132,22 @@ class Maze:
         self.walls = []
         self.lights = []
 
+    # Checks wall array for collision and returns the wall it finds
     def collision(self, new_pos, matrix):
         for wall in self.walls:
             if matrix.is_between(new_pos, wall):
                 return wall
         return None
+
+    # Returns slide to point of wall
+    def slide(self, eye, motion_vector, wall):
+        # Wall line vector simplified since we only deal with walls directly angled on the x or z axes
+        if wall.scale[0] > wall.scale[2]:
+            line_vector = Vector(1, 0, 0)
+        else:
+            line_vector = Vector(0, 0, 1)
+        # Find the nearest perpendicular point on the wall from motion vector
+        return line_vector * motion_vector.dot(line_vector)
 
     # creates walls of maze by reading array of walls
     def create_walls(self, ambient, diffuse, specular):
@@ -144,19 +155,24 @@ class Maze:
         wall_size = 8
         # Width of hallways
         grid_unit = 100/20
-        # Borders
-        # Vertical
+
+        # Vertical == longer on x than z, Horizontal == longer on z than x
+        # Vertical border walls
         self.walls.append(Cube(ambient, diffuse, specular, Point(-50, wall_size / 2, -0), (100, wall_size, 0.1), 15))
         self.walls.append(Cube(ambient, diffuse, specular, Point(-50, wall_size / 2, -100), (100, wall_size, 0.1), 15))
-        # Horizontal
+        # Horizontal border walls
         self.walls.append(Cube(ambient, diffuse, specular, Point(-100, wall_size / 2, -50), (0.1, wall_size, 100), 15))
         self.walls.append(Cube(ambient, diffuse, specular, Point(-0, wall_size / 2, -50), (0.1, wall_size, 100), 15))
         # Inside walls
         for wall in inside_walls:
             if wall[3] == "VERTICAL":
-                self.walls.append(Cube(ambient, diffuse, specular, Point(-wall[1]*grid_unit, wall_size / 2, -wall[0]*grid_unit), (wall[2]*grid_unit, wall_size, 0.1), 15))
+                self.walls.append(Cube(ambient, diffuse, specular,
+                                       Point(-wall[1]*grid_unit, wall_size / 2, -wall[0]*grid_unit),
+                                       (wall[2]*grid_unit, wall_size, 0.1), 15))
             elif wall[3] == "HORIZONTAL":
-                self.walls.append(Cube(ambient, diffuse, specular, Point(-wall[0]*grid_unit, wall_size / 2, -wall[1]*grid_unit), (0.1, wall_size, wall[2]*grid_unit), 15))
+                self.walls.append(Cube(ambient, diffuse, specular,
+                                       Point(-wall[0]*grid_unit, wall_size / 2, -wall[1]*grid_unit),
+                                       (0.1, wall_size, wall[2]*grid_unit), 15))
 
 
 class Light:
