@@ -140,7 +140,7 @@ class Maze:
         return None
 
     # Returns slide to point of wall
-    def slide(self, eye, motion_vector, wall):
+    def slide(self, motion_vector, wall):
         # Wall line vector simplified since we only deal with walls directly angled on the x or z axes
         if wall.scale[0] > wall.scale[2]:
             line_vector = Vector(1, 0, 0)
@@ -158,21 +158,21 @@ class Maze:
 
         # Vertical == longer on x than z, Horizontal == longer on z than x
         # Vertical border walls
-        self.walls.append(Cube(ambient, diffuse, specular, Point(-50, wall_size / 2, -0), (100, wall_size, 0.1), 15))
-        self.walls.append(Cube(ambient, diffuse, specular, Point(-50, wall_size / 2, -100), (100, wall_size, 0.1), 15))
+        self.walls.append(Cube(ambient, diffuse, specular, Point(-50, wall_size/2, -0.05), (100, wall_size, 0.1), 15))
+        self.walls.append(Cube(ambient, diffuse, specular, Point(-50, wall_size/2, -99.95), (100, wall_size, 0.1), 15))
         # Horizontal border walls
-        self.walls.append(Cube(ambient, diffuse, specular, Point(-100, wall_size / 2, -50), (0.1, wall_size, 100), 15))
-        self.walls.append(Cube(ambient, diffuse, specular, Point(-0, wall_size / 2, -50), (0.1, wall_size, 100), 15))
+        self.walls.append(Cube(ambient, diffuse, specular, Point(-99.95, wall_size/2, -50), (0.1, wall_size, 100), 15))
+        self.walls.append(Cube(ambient, diffuse, specular, Point(-0.05, wall_size/2, -50), (0.1, wall_size, 100), 15))
         # Inside walls
         for wall in inside_walls:
             if wall[3] == "VERTICAL":
                 self.walls.append(Cube(ambient, diffuse, specular,
                                        Point(-wall[1]*grid_unit, wall_size / 2, -wall[0]*grid_unit),
-                                       (wall[2]*grid_unit, wall_size, 0.1), 15))
+                                       (wall[2]*grid_unit+0.1, wall_size, 0.1), 15))
             elif wall[3] == "HORIZONTAL":
                 self.walls.append(Cube(ambient, diffuse, specular,
                                        Point(-wall[0]*grid_unit, wall_size / 2, -wall[1]*grid_unit),
-                                       (0.1, wall_size, wall[2]*grid_unit), 15))
+                                       (0.1, wall_size, wall[2]*grid_unit+0.1), 15))
 
 
 class Light:
@@ -212,7 +212,7 @@ inside_walls = [
     (5, 4.5, 1, "VERTICAL"),
     (5, 8, 4, "VERTICAL"),
     (6, 6, 6, "VERTICAL"),
-    (6, 11.5, 2, "VERTICAL"),
+    (6, 11, 2, "VERTICAL"),
     (6, 14.5, 1, "VERTICAL"),
     (6, 17.5, 1, "VERTICAL"),
     (7, 6.5, 7, "VERTICAL"),
