@@ -9,7 +9,7 @@ class Maze3D:
         pygame.init()
         pygame.display.set_mode((800, 600), pygame.OPENGL | pygame.DOUBLEBUF)
 
-        self.game = Game(Player(Point(0, 3, 10), 10, pi, Point(0, 1, 0)))
+        self.game = Game(Player(Point(-5, 3, -5), 10, pi, Point(0, 1, 0)))
 
         self.game.look()
         self.game.set_perspective(pi/2, 800/600, 0.3, 300)
@@ -49,14 +49,18 @@ class Maze3D:
             if not collision_wall:
                 self.game.view_matrix.eye += new_pos
             else:
-                self.game.view_matrix.eye += self.game.maze.slide(new_pos, collision_wall)
+                new_pos = self.game.maze.slide(new_pos, collision_wall)
+                if not self.game.maze.collision(new_pos, self.game.view_matrix):
+                    self.game.view_matrix.eye += new_pos
         if self.inputs["S"]:
             new_pos = self.game.view_matrix.slide(0, 0, self.game.player.speed * delta_time)
             collision_wall = self.game.maze.collision(new_pos, self.game.view_matrix)
             if not collision_wall:
                 self.game.view_matrix.eye += new_pos
             else:
-                self.game.view_matrix.eye += self.game.maze.slide(new_pos, collision_wall)
+                new_pos = self.game.maze.slide(new_pos, collision_wall)
+                if not self.game.maze.collision(new_pos, self.game.view_matrix):
+                    self.game.view_matrix.eye += new_pos
         if self.inputs["A"]:
             self.game.view_matrix.yaw(-self.game.player.rotationSpeed * delta_time)
         if self.inputs["D"]:
