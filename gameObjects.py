@@ -131,6 +131,8 @@ class Maze:
         self.floor = Cube((0.01, 0.3, 0.01), (0.1, 0.8, 0.3), (0.3, 0.7, 0.2), Point(-50, 0, -50), (100, 0.1, 100), 18)
         self.walls = []
         self.lights = []
+        self.walls.append(self.floor)
+
 
     # Checks wall array for collision and returns the wall it finds
     def collision(self, new_pos, matrix):
@@ -173,6 +175,18 @@ class Maze:
                 self.walls.append(Cube(ambient, diffuse, specular,
                                        Point(-wall[0]*grid_unit, wall_size / 2, -wall[1]*grid_unit),
                                        (0.1, wall_size, wall[2]*grid_unit+0.1), 15))
+
+    def get_light_positions(self):
+        return [x.position for x in self.lights]
+
+    def get_light_ambients(self):
+        return [{"r": x.ambient[0], "g": x.ambient[1], "b": x.ambient[2]} for x in self.lights]
+
+    def get_light_diffuses(self):
+        return [{"r": x.diffuse[0], "g": x.diffuse[1], "b": x.diffuse[2]} for x in self.lights]
+
+    def get_light_speculars(self):
+        return [{"r": x.specular[0], "g": x.specular[1], "b": x.specular[2]} for x in self.lights]
 
 
 class Light:

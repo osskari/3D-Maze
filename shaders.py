@@ -44,13 +44,17 @@ class Shader3D:
 
         # Light
         # Position of light source
-        self.lightPosLoc = glGetUniformLocation(self.renderingProgramID, "u_light_position")
+        self.lightPosLoc1 = glGetUniformLocation(self.renderingProgramID, "u_light_position_1")
+        self.lightPosLoc2 = glGetUniformLocation(self.renderingProgramID, "u_light_position_2")
         # Ambient of light source
-        self.lightAmbientLoc = glGetUniformLocation(self.renderingProgramID, "u_light_ambient")
+        self.lightAmbientLoc1 = glGetUniformLocation(self.renderingProgramID, "u_light_ambient_1")
+        self.lightAmbientLoc2 = glGetUniformLocation(self.renderingProgramID, "u_light_ambient_2")
         # Diffuse of light source
-        self.lightDiffuseLoc = glGetUniformLocation(self.renderingProgramID, "u_light_diffuse")
+        self.lightDiffuseLoc1 = glGetUniformLocation(self.renderingProgramID, "u_light_diffuse1")
+        self.lightDiffuseLoc2 = glGetUniformLocation(self.renderingProgramID, "u_light_diffuse2")
         # Specular of light source
-        self.lightSpecularLoc = glGetUniformLocation(self.renderingProgramID, "u_light_specular")
+        self.lightSpecularLoc1 = glGetUniformLocation(self.renderingProgramID, "u_light_specular_1")
+        self.lightSpecularLoc2 = glGetUniformLocation(self.renderingProgramID, "u_light_specular_2")
 
         # Material
         # Material position
@@ -94,22 +98,26 @@ class Shader3D:
         glUniform4f(self.globalAmbientLoc, x, y, z, 1.0)
 
     # Light
-    def set_light_position(self, x, y, z):
-        glUniform4f(self.lightPosLoc, x, y, z, 1.0)
+    def set_light_position(self, lights):
+        glUniform4f(self.lightPosLoc1, lights[0].x, lights[0].y, lights[0].z, 1.0)
+        glUniform4f(self.lightPosLoc2, lights[1].x, lights[1].y, lights[1].z, 1.0)
 
-    def set_light_color(self, r, g, b):
-        self.set_light_ambient(r, g, b)
-        self.set_light_diffuse(r, g, b)
-        self.set_light_specular(r, g, b)
+    def set_light_color(self, lights):
+        self.set_light_ambient(lights)
+        self.set_light_diffuse(lights)
+        self.set_light_specular(lights)
 
-    def set_light_ambient(self, r, g, b):
-        glUniform4f(self.lightAmbientLoc, r, g, b, 1.0)
+    def set_light_ambient(self, lights):
+        glUniform4f(self.lightAmbientLoc1, lights[0]["r"], lights[0]["g"], lights[0]["b"], 1.0)
+        glUniform4f(self.lightAmbientLoc2, lights[1]["r"], lights[1]["g"], lights[1]["b"], 1.0)
 
-    def set_light_diffuse(self, r, g, b):
-        glUniform4f(self.lightDiffuseLoc, r, g, b, 1.0)
+    def set_light_diffuse(self, lights):
+        glUniform4f(self.lightDiffuseLoc1, lights[0]["r"], lights[0]["g"], lights[0]["b"], 1.0)
+        glUniform4f(self.lightDiffuseLoc2, lights[1]["r"], lights[1]["g"], lights[1]["b"], 1.0)
 
-    def set_light_specular(self, r, g, b):
-        glUniform4f(self.lightSpecularLoc, r, g, b, 1.0)
+    def set_light_specular(self, lights):
+        glUniform4f(self.lightSpecularLoc1, lights[0]["r"], lights[0]["g"], lights[0]["b"], 1.0)
+        glUniform4f(self.lightSpecularLoc2, lights[1]["r"], lights[1]["g"], lights[1]["b"], 1.0)
 
     # Material
     def set_position_attribute(self, vertex_array):

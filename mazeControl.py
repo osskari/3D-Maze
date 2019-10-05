@@ -24,7 +24,8 @@ class Maze3D:
         self.inputs = inputs
         self.game.maze.create_walls((0.1, 0.01, 0.01), (0.6, 0.6, 0.6), (0.9, 0.5, 0.2))
 
-        self.game.maze.lights.append(Light(self.game.player.position, (1.0, 1.0, 1.0)))
+        self.game.maze.lights.append(Light(self.game.player.position, (0.2, 0.2, 0.2)))
+        self.game.maze.lights.append(Light(self.sun.position, (0.5, 0.5, 0.5)))
 
         self.clock = pygame.time.Clock()
         self.clock.tick()
@@ -76,6 +77,7 @@ class Maze3D:
 
         self.game.player.position = self.game.view_matrix.eye
         self.game.maze.lights[0].position = self.game.view_matrix.eye
+        self.game.maze.lights[1].position = self.sun.position
 
     def display(self):
         glEnable(GL_DEPTH_TEST)
@@ -87,8 +89,8 @@ class Maze3D:
 
         self.game.shader.set_view_matrix(self.game.view_matrix.get_matrix())
 
-        self.game.shader.set_light_position(*self.game.maze.lights[0].position)
-        self.game.shader.set_light_color(*self.game.maze.lights[0].ambient)
+        self.game.shader.set_light_position(self.game.maze.get_light_positions())
+        self.game.shader.set_light_color(self.game.maze.get_light_ambients())
 
         self.game.model_matrix.load_identity()
 
@@ -102,8 +104,8 @@ class Maze3D:
         self.sun.draw(self.game.model_matrix, self.game.shader)
         self.game.model_matrix.pop_matrix()
 
-        self.game.shader.set_light_position(*self.sun.position)
-        self.game.shader.set_light_color(0.5, 0.5, 0.5)
+        # self.game.shader.set_light_position(*self.sun.position)
+        # self.game.shader.set_light_color(0.5, 0.5, 0.5)
 
         self.game.maze.walls[0].set_vertices(self.game.shader)
         for wall in self.game.maze.walls:
