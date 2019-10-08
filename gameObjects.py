@@ -131,8 +131,48 @@ class Maze:
         self.floor = Cube((0.01, 0.3, 0.01), (0.1, 0.8, 0.3), (0.3, 0.7, 0.2), Point(-50, 0, -50), (100, 0.1, 100), 18)
         self.walls = []
         self.lights = []
-        self.walls.append(self.floor)
+        self.sun = Sphere((1.0, 0.4, 0.3), (0.8, 0.7, 0.1), (0.9, 0.2, 0.2), Point(0, pi, pi), (5, 5, 5), 100)
 
+    def create_lights(self, player_pos,):
+        self.lights.append(Light(player_pos, (0.2, 0.2, 0.2)))
+        self.lights.append(Light(self.sun.position, (0.5, 0.5, 0.5)))
+
+    def draw_maze(self, shader, model_matrix, sun_angle):
+        # Draw sun
+        self.sun.set_vertices(shader)
+        self.sun.set_color(shader)
+        model_matrix.push_matrix()
+        self.sun.set_position(Point(0, -sin(sun_angle / 10) * 100, cos(sun_angle / 10) * 100))
+        self.sun.draw(model_matrix, shader)
+        model_matrix.pop_matrix()
+        # Draw walls
+        self.walls[0].set_vertices(shader)
+        self.walls[0].set_color(shader)
+        for wall in self.walls:
+            model_matrix.push_matrix()
+            wall.draw(model_matrix, shader)
+            model_matrix.pop_matrix()
+        # Draw floor
+        self.floor.set_color(shader)
+        model_matrix.push_matrix()
+        self.floor.draw(model_matrix, shader)
+        model_matrix.pop_matrix()
+
+    def update_player(self, view_matrix, player_speed, delta_time):
+        # Get new motion vector
+        new_pos = view_matrix.slide(0, 0, -player_speed * delta_time)
+        # Get wall the player is about to collide with
+        collision_wall = self.collision(new_pos, view_matrix)
+        # If there's no wall to collide with, move the player normally
+        if not collision_wall:
+            view_matrix.eye += new_pos
+        # If the player is about to collide
+        else:
+            # calculate the slide vector
+            new_pos = self.slide(new_pos, collision_wall)
+            # If slide vector doesn't collide with a different wall, move about slide vector
+            if not self.collision(new_pos, view_matrix):
+                view_matrix.eye += new_pos
 
     # Checks wall array for collision and returns the wall it finds
     def collision(self, new_pos, matrix):
