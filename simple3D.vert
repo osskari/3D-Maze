@@ -29,6 +29,7 @@ void main(void)
 	v_normal_2 = normalize(u_model_matrix * normal);
 
 	// global coordinates
+	position = u_view_matrix * position;
 	v_s_1 = normalize(u_light_position_1 - position);
 	vec4 v_1 = normalize(u_eye_position - position);
 	v_h_1 = normalize(v_s_1+v_1);
@@ -37,7 +38,6 @@ void main(void)
 	vec4 v_2 = normalize(u_eye_position - position);
 	v_h_2 = normalize(v_s_2+v_2);
 
-	position = u_view_matrix * position;
 	position = u_projection_matrix * position;
 
 	gl_Position = position;

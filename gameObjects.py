@@ -201,7 +201,7 @@ class Light:
 inputs = {
             "W": False,  # Walk forward
             "A": False,  # Turn left
-            "S": False,  # Walk backwards
+            "S": False,  # Walk backwardsw
             "D": False,   # Turn right
             "UP": False,  # Turn up
             "DOWN": False,   # Turn down

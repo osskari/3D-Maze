@@ -9,7 +9,7 @@ class Maze3D:
         pygame.init()
         pygame.display.set_mode((800, 600), pygame.OPENGL | pygame.DOUBLEBUF)
 
-        self.game = Game(Player(Point(-5, 3, -5), 10, pi, Point(0, 1, 0)))
+        self.game = Game(Player(Point(-5, 3, -5), 10, pi, Point(-6, 3, -6)))
 
         self.game.look()
         self.game.set_perspective(pi/2, 800/600, 0.3, 300)
@@ -24,8 +24,8 @@ class Maze3D:
         self.inputs = inputs
         self.game.maze.create_walls((0.1, 0.01, 0.01), (0.6, 0.6, 0.6), (0.9, 0.5, 0.2))
 
-        self.game.maze.lights.append(Light(self.game.player.position, (0.2, 0.2, 0.2)))
-        self.game.maze.lights.append(Light(self.sun.position, (0.5, 0.5, 0.5)))
+        self.game.maze.lights.append(Light(self.game.player.position, (0.5, 0.5, 0.5)))
+        self.game.maze.lights.append(Light(self.sun.position, (0.7, 0.7, 0.7), (0.8, 0.1, 0.1)))
 
         self.clock = pygame.time.Clock()
         self.clock.tick()

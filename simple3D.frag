@@ -37,5 +37,5 @@ void main(void)
                    + lambert_2 * u_light_diffuse_2 * u_mat_diffuse
                    + u_light_specular_2 * u_mat_specular * pow(phong_2, u_mat_shininess);
 
-    gl_FragColor = u_global_ambient * u_mat_ambient + i_1 + i_2;
+    gl_FragColor = (u_global_ambient * u_mat_ambient) + i_1 + i_2;
 }
