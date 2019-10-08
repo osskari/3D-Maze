@@ -41,13 +41,17 @@ class Maze3D:
             if self.game.maze.update_player(self.game.view_matrix, -self.game.player.speed, delta_time):
                 return True
         if self.inputs["A"]:
-            self.game.view_matrix.yaw(-self.game.player.rotationSpeed * delta_time)
+            # self.game.view_matrix.yaw(-self.game.player.rotationSpeed * delta_time)
+            self.game.view_matrix.rotateY(self.game.player.rotationSpeed * delta_time)
         if self.inputs["D"]:
-            self.game.view_matrix.yaw(self.game.player.rotationSpeed * delta_time)
+            # self.game.view_matrix.yaw(self.game.player.rotationSpeed * delta_time)
+            self.game.view_matrix.rotateY(-self.game.player.rotationSpeed * delta_time)
         if self.inputs["LEFT"]:
-            self.game.view_matrix.yaw(-self.game.player.rotationSpeed * delta_time)
+            # self.game.view_matrix.yaw(-self.game.player.rotationSpeed * delta_time)
+            self.game.view_matrix.rotateY(self.game.player.rotationSpeed * delta_time)
         if self.inputs["RIGHT"]:
-            self.game.view_matrix.yaw(self.game.player.rotationSpeed * delta_time)
+            # self.game.view_matrix.yaw(self.game.player.rotationSpeed * delta_time)
+            self.game.view_matrix.rotateY(-self.game.player.rotationSpeed * delta_time)
         if self.inputs["DOWN"]:
             self.game.view_matrix.pitch(self.game.player.rotationSpeed * delta_time)
         if self.inputs["UP"]:
