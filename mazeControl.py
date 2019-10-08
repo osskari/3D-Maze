@@ -33,9 +33,11 @@ class Maze3D:
 
         # Handle user input
         if self.inputs["W"]:
-            self.game.maze.update_player(self.game.view_matrix, self.game.player.speed, delta_time)
+            if self.game.maze.update_player(self.game.view_matrix, self.game.player.speed, delta_time):
+                return True
         if self.inputs["S"]:
-            self.game.maze.update_player(self.game.view_matrix, -self.game.player.speed, delta_time)
+            if self.game.maze.update_player(self.game.view_matrix, -self.game.player.speed, delta_time):
+                return True
         if self.inputs["A"]:
             self.game.view_matrix.yaw(-self.game.player.rotationSpeed * delta_time)
         if self.inputs["D"]:
@@ -52,6 +54,7 @@ class Maze3D:
         self.game.player.position = self.game.view_matrix.eye
         self.game.maze.lights[0].position = self.game.view_matrix.eye
         self.game.maze.lights[1].position = self.game.maze.sun.position
+        return False
 
     def display(self):
         glEnable(GL_DEPTH_TEST)
@@ -73,16 +76,15 @@ class Maze3D:
 
         pygame.display.flip()
 
-    def events(self, exiting):
-        ret_val = exiting
+    def events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 print("Quitting!")
-                ret_val = True
+                return True
             elif event.type == pygame.KEYDOWN:
                 if event.key == K_ESCAPE:
                     print("Escaping!")
-                    ret_val = True
+                    return True
                 if event.key == K_w:
                     self.inputs["W"] = True
                 if event.key == K_s:
@@ -116,14 +118,16 @@ class Maze3D:
                 #     self.inputs["RIGHT"] = False
                 # if event.key == K_LEFT:
                 #     self.inputs["LEFT"] = False
-        return ret_val
+            return False
 
     def program_loop(self):
         exiting = False
         while not exiting:
-            exiting = self.events(exiting)
-            self.update()
-            self.display()
+            exiting = self.events()
+            if not exiting:
+                exiting = self.update()
+            if not exiting:
+                self.display()
 
         # OUT OF GAME LOOP
         pygame.quit()

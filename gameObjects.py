@@ -54,6 +54,16 @@ class Cube(Drawable):
                              1.0, 0.0, 0.0,
                              1.0, 0.0, 0.0]
 
+    def __eq__(self, other):
+        print(other.position - Point(*other.scale) < self.position < other.position + Point(*other.scale))
+        return other.position - Point(*other.scale) < self.position < other.position + Point(*other.scale)
+
+    def __add__(self, other):
+        return self.position + other.position
+
+    def __sub__(self, other):
+        return self.position - other.position
+
     def draw(self, model_matrix, shader):
         super(Cube, self).draw(model_matrix, shader)
         # draw
@@ -132,6 +142,7 @@ class Maze:
         self.walls = []
         self.lights = []
         self.sun = Sphere((1.0, 0.4, 0.3), (0.8, 0.7, 0.1), (0.9, 0.2, 0.2), Point(0, pi, pi), (5, 5, 5), 100)
+        self.goal = Cube((0.1, 0.1, 0.2), (0.4, 0.3, 0.8), (0.3, 0.3, 0.8), Point(-45, 3, -50), (5, 5, 5), 30)
 
     def create_lights(self, player_pos,):
         self.lights.append(Light(player_pos, (0.2, 0.2, 0.2)))
@@ -157,6 +168,11 @@ class Maze:
         model_matrix.push_matrix()
         self.floor.draw(model_matrix, shader)
         model_matrix.pop_matrix()
+        # Draw goal
+        self.goal.set_color(shader)
+        model_matrix.push_matrix()
+        self.goal.draw(model_matrix, shader)
+        model_matrix.pop_matrix()
 
     def update_player(self, view_matrix, player_speed, delta_time):
         # Get new motion vector
@@ -168,6 +184,9 @@ class Maze:
             view_matrix.eye += new_pos
         # If the player is about to collide
         else:
+            # If colliding with goal, quit game
+            if collision_wall == self.goal:
+                return True
             # calculate the slide vector
             new_pos = self.slide(new_pos, collision_wall)
             # If slide vector doesn't collide with a different wall, move about slide vector
@@ -179,6 +198,8 @@ class Maze:
         for wall in self.walls:
             if matrix.is_between(new_pos, wall):
                 return wall
+        if matrix.is_between(new_pos, self.goal):
+            return self.goal
         return None
 
     # Returns slide to point of wall
