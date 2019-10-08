@@ -9,7 +9,7 @@ class Maze3D:
         pygame.init()
         pygame.display.set_mode((800, 600), pygame.OPENGL | pygame.DOUBLEBUF)
 
-        self.game = Game(Player(Point(-5, 3, -5), 10, pi, Point(0, 1, 0)))
+        self.game = Game(Player(Point(-5, 3, -5), 10, pi, Point(-50, 3, -50)))
 
         self.game.look()
         self.game.set_perspective(pi/2, 800/600, 0.3, 300)
