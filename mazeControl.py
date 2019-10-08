@@ -9,10 +9,10 @@ class Maze3D:
         pygame.init()
         pygame.display.set_mode((800, 600), pygame.OPENGL | pygame.DOUBLEBUF)
 
-        self.game = Game(Player(Point(-5, 3, -5), 10, pi, Point(-50, 3, -50)))
+        self.game = Game(Player(Point(-5, 3, -5), 10, pi, Point(-6, 3, -6)))
 
         self.game.look()
-        self.game.set_perspective(pi/2, 800/600, 0.3, 300)
+        self.game.set_perspective(pi / 2, 800 / 600, 0.3, 300)
 
         self.inputs = inputs
         self.game.maze.create_walls((0.1, 0.01, 0.01), (0.6, 0.6, 0.6), (0.9, 0.5, 0.2))
@@ -27,9 +27,11 @@ class Maze3D:
         delta_time = self.clock.tick() / 1000.0
 
         # Update position of the sun
-        self.sun_angle += (pi/2) * delta_time
+        self.sun_angle += (pi / 2) * delta_time
         if self.sun_angle > 20 * pi:
             self.sun_angle = 0
+
+
 
         # Handle user input
         if self.inputs["W"]:
@@ -42,16 +44,17 @@ class Maze3D:
             self.game.view_matrix.yaw(-self.game.player.rotationSpeed * delta_time)
         if self.inputs["D"]:
             self.game.view_matrix.yaw(self.game.player.rotationSpeed * delta_time)
-        # if self.inputs["LEFT"]:
-        #     self.game.view_matrix.yaw(-self.game.player.rotationSpeed * delta_time)
-        # if self.inputs["RIGHT"]:
-        #     self.game.view_matrix.yaw(self.game.player.rotationSpeed * delta_time)
-        # if self.inputs["DOWN"]:
-        #     self.game.view_matrix.pitch(self.game.player.rotationSpeed * delta_time)
-        # if self.inputs["UP"]:
-        #     self.game.view_matrix.pitch(-self.game.player.rotationSpeed * delta_time)
+        if self.inputs["LEFT"]:
+            self.game.view_matrix.yaw(-self.game.player.rotationSpeed * delta_time)
+        if self.inputs["RIGHT"]:
+            self.game.view_matrix.yaw(self.game.player.rotationSpeed * delta_time)
+        if self.inputs["DOWN"]:
+            self.game.view_matrix.pitch(self.game.player.rotationSpeed * delta_time)
+        if self.inputs["UP"]:
+            self.game.view_matrix.pitch(-self.game.player.rotationSpeed * delta_time)
 
         self.game.player.position = self.game.view_matrix.eye
+        self.game.maze.sun.set_position(Point(0, -sin(self.sun_angle / 10) * 100, cos(self.sun_angle / 10) * 100))
         self.game.maze.lights[0].position = self.game.view_matrix.eye
         self.game.maze.lights[1].position = self.game.maze.sun.position
         return False
@@ -93,14 +96,14 @@ class Maze3D:
                     self.inputs["A"] = True
                 if event.key == K_d:
                     self.inputs["D"] = True
-                # if event.key == K_UP:
-                #     self.inputs["UP"] = True
-                # if event.key == K_DOWN:
-                #     self.inputs["DOWN"] = True
-                # if event.key == K_RIGHT:
-                #     self.inputs["RIGHT"] = True
-                # if event.key == K_LEFT:
-                #     self.inputs["LEFT"] = True
+                if event.key == K_UP:
+                    self.inputs["UP"] = True
+                if event.key == K_DOWN:
+                    self.inputs["DOWN"] = True
+                if event.key == K_RIGHT:
+                    self.inputs["RIGHT"] = True
+                if event.key == K_LEFT:
+                    self.inputs["LEFT"] = True
             elif event.type == pygame.KEYUP:
                 if event.key == K_w:
                     self.inputs["W"] = False
@@ -110,14 +113,14 @@ class Maze3D:
                     self.inputs["A"] = False
                 if event.key == K_d:
                     self.inputs["D"] = False
-                # if event.key == K_UP:
-                #     self.inputs["UP"] = False
-                # if event.key == K_DOWN:
-                #     self.inputs["DOWN"] = False
-                # if event.key == K_RIGHT:
-                #     self.inputs["RIGHT"] = False
-                # if event.key == K_LEFT:
-                #     self.inputs["LEFT"] = False
+                if event.key == K_UP:
+                    self.inputs["UP"] = False
+                if event.key == K_DOWN:
+                    self.inputs["DOWN"] = False
+                if event.key == K_RIGHT:
+                    self.inputs["RIGHT"] = False
+                if event.key == K_LEFT:
+                    self.inputs["LEFT"] = False
             return False
 
     def program_loop(self):

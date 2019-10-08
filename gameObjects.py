@@ -141,11 +141,12 @@ class Maze:
         self.floor = Cube((0.01, 0.3, 0.01), (0.1, 0.8, 0.3), (0.3, 0.7, 0.2), Point(-50, 0, -50), (100, 0.1, 100), 18)
         self.walls = []
         self.lights = []
-        self.sun = Sphere((1.0, 0.4, 0.3), (0.8, 0.7, 0.1), (0.9, 0.2, 0.2), Point(0, pi, pi), (5, 5, 5), 100)
+        self.sun = Sphere((1.0, 0.4, 0.3), (0.8, 0.7, 0.1), (0.9, 0.2, 0.2), Point(0, pi, pi), (5, 5, 5), 3)
         self.goal = Cube((0.1, 0.1, 0.2), (0.4, 0.3, 0.8), (0.3, 0.3, 0.8), Point(-45, 3, -50), (5, 5, 5), 30)
 
     def create_lights(self, player_pos,):
-        self.lights.append(Light(player_pos, (0.2, 0.2, 0.2)))
+        # self.lights.append(Light(player_pos, (0.2, 0.2, 0.2)))
+        self.lights.append(Light(self.sun.position, (0.5, 0.5, 0.5)))
         self.lights.append(Light(self.sun.position, (0.5, 0.5, 0.5)))
 
     def draw_maze(self, shader, model_matrix, sun_angle):
@@ -153,7 +154,6 @@ class Maze:
         self.sun.set_vertices(shader)
         self.sun.set_color(shader)
         model_matrix.push_matrix()
-        self.sun.set_position(Point(0, -sin(sun_angle / 10) * 100, cos(sun_angle / 10) * 100))
         self.sun.draw(model_matrix, shader)
         model_matrix.pop_matrix()
         # Draw walls
@@ -262,7 +262,7 @@ class Light:
 inputs = {
             "W": False,  # Walk forward
             "A": False,  # Turn left
-            "S": False,  # Walk backwards
+            "S": False,  # Walk backwardsw
             "D": False,   # Turn right
             "UP": False,  # Turn up
             "DOWN": False,   # Turn down
