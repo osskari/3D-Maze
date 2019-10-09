@@ -1,5 +1,3 @@
-from math import *  # trigonometry
-
 from baseObjects import *
 
 
@@ -143,8 +141,7 @@ class ViewMatrix:
         self.n = self.u * -s + self.n * c
         self.u = tmp_u
 
-    def rotateY(self, angle):
-        # rad = angle * pi / 180
+    def rotate_y(self, angle):
         c = cos(angle)
         s = -sin(angle)
 
@@ -153,9 +150,6 @@ class ViewMatrix:
         self.n = Vector(c * self.n.x - s * self.n.z, self.n.y, s * self.n.x + c * self.n.z)
 
     def walk(self, delta):
-        # return Vector(self.u.x * delta + self.v.x * delta + self.n.x * delta
-        #               , 0
-        #               , self.u.z * delta + self.v.z * delta + self.n.z * delta)
         return Vector(delta * self.n.x, 0, delta * self.n.z)
 
     def is_between(self, new_pos, drawable):
@@ -187,10 +181,10 @@ class ProjectionMatrix:
 
         self.is_orthographic = True
 
-    def set_perspective(self, fovy, aspect, near, far):
+    def set_perspective(self, fov_y, aspect, near, far):
         self.near = near
         self.far = far
-        self.top = near * tan(fovy / 2)
+        self.top = near * tan(fov_y / 2)
         self.bottom = -self.top
         self.right = self.top * aspect
         self.left = -self.right
@@ -207,26 +201,26 @@ class ProjectionMatrix:
 
     def get_matrix(self):
         if self.is_orthographic:
-            A = 2 / (self.right - self.left)
-            B = -(self.right + self.left) / (self.right - self.left)
-            C = 2 / (self.top - self.bottom)
-            D = -(self.top + self.bottom) / (self.top - self.bottom)
-            E = 2 / (self.near - self.far)
-            F = (self.near + self.far) / (self.near - self.far)
+            a = 2 / (self.right - self.left)
+            b = -(self.right + self.left) / (self.right - self.left)
+            c = 2 / (self.top - self.bottom)
+            d = -(self.top + self.bottom) / (self.top - self.bottom)
+            e = 2 / (self.near - self.far)
+            f = (self.near + self.far) / (self.near - self.far)
 
-            return [A, 0, 0, B,
-                    0, C, 0, D,
-                    0, 0, E, F,
+            return [a, 0, 0, b,
+                    0, c, 0, d,
+                    0, 0, e, f,
                     0, 0, 0, 1]
 
         else:
-            A = (2 * self.near) / (self.right - self.left)
-            B = (self.right + self.left) / (self.right - self.left)
-            C = (2 * self.near) / (self.top - self.bottom)
-            D = (self.top + self.bottom) / (self.top - self.bottom)
-            E = -(self.far + self.near) / (self.far - self.near)
-            F = -(2 * self.far * self.near) / (self.far - self.near)
-            return [A, 0, B, 0,
-                    0, C, D, 0,
-                    0, 0, E, F,
+            a = (2 * self.near) / (self.right - self.left)
+            b = (self.right + self.left) / (self.right - self.left)
+            c = (2 * self.near) / (self.top - self.bottom)
+            d = (self.top + self.bottom) / (self.top - self.bottom)
+            e = -(self.far + self.near) / (self.far - self.near)
+            f = -(2 * self.far * self.near) / (self.far - self.near)
+            return [a, 0, b, 0,
+                    0, c, d, 0,
+                    0, 0, e, f,
                     0, 0, -1, 0]

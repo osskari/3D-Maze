@@ -40,16 +40,16 @@ class Maze3D:
                 return True
         if self.inputs["A"]:
             # self.game.view_matrix.yaw(-self.game.player.rotationSpeed * delta_time)
-            self.game.view_matrix.rotateY(self.game.player.rotationSpeed * delta_time)
+            self.game.view_matrix.rotate_y(self.game.player.rotationSpeed * delta_time)
         if self.inputs["D"]:
             # self.game.view_matrix.yaw(self.game.player.rotationSpeed * delta_time)
-            self.game.view_matrix.rotateY(-self.game.player.rotationSpeed * delta_time)
+            self.game.view_matrix.rotate_y(-self.game.player.rotationSpeed * delta_time)
         if self.inputs["LEFT"]:
             # self.game.view_matrix.yaw(-self.game.player.rotationSpeed * delta_time)
-            self.game.view_matrix.rotateY(self.game.player.rotationSpeed * delta_time)
+            self.game.view_matrix.rotate_y(self.game.player.rotationSpeed * delta_time)
         if self.inputs["RIGHT"]:
             # self.game.view_matrix.yaw(self.game.player.rotationSpeed * delta_time)
-            self.game.view_matrix.rotateY(-self.game.player.rotationSpeed * delta_time)
+            self.game.view_matrix.rotate_y(-self.game.player.rotationSpeed * delta_time)
         if self.inputs["DOWN"]:
             self.game.view_matrix.pitch(self.game.player.rotationSpeed * delta_time)
         if self.inputs["UP"]:
@@ -72,12 +72,12 @@ class Maze3D:
         self.game.shader.set_view_matrix(self.game.view_matrix.get_matrix())
 
         self.game.shader.set_light_position(self.game.maze.get_light_positions())
-        self.game.shader.set_light_color(self.game.maze.get_light_ambients())
+        self.game.shader.set_light_color(self.game.maze.get_light_ambient())
 
         self.game.model_matrix.load_identity()
 
         # Draw stuff
-        self.game.maze.draw_maze(self.game.shader, self.game.model_matrix, self.sun_angle)
+        self.game.maze.draw_maze(self.game.shader, self.game.model_matrix)
 
         pygame.display.flip()
 

@@ -65,7 +65,6 @@ class Cube(Drawable):
 
     def draw(self, model_matrix, shader):
         super(Cube, self).draw(model_matrix, shader)
-        # draw
         for i in range(0, 21, 4):
             glDrawArrays(GL_TRIANGLE_FAN, i, 4)
 
@@ -144,12 +143,11 @@ class Maze:
         self.goal = Cube((0.1, 0.1, 0.2), (0.4, 0.3, 0.8), (0.3, 0.3, 0.8), Point(-45, 3, -50), (5, 5, 5), 30)
 
     def create_lights(self, player_pos,):
-        # self.lights.append(Light(player_pos, (0.2, 0.2, 0.2)))
         self.lights.append(Light(player_pos, (0.5, 0.5, 0.5)))
         self.lights.append(Light(self.sun.position, (0.5, 0.5, 0.5)))
         self.lights.append(Light(Point(-45, 10, -50), (0.2, 0.95, 0.2)))
 
-    def draw_maze(self, shader, model_matrix, sun_angle):
+    def draw_maze(self, shader, model_matrix):
         # Draw sun
         self.sun.set_vertices(shader)
         self.sun.set_color(shader)
@@ -205,7 +203,8 @@ class Maze:
         return None
 
     # Returns slide to point of wall
-    def slide(self, motion_vector, wall):
+    @staticmethod
+    def slide(motion_vector, wall):
         # Wall line vector simplified since we only deal with walls directly angled on the x or z axes
         if wall.scale[0] > wall.scale[2]:
             line_vector = Vector(1, 0, 0)
@@ -242,13 +241,13 @@ class Maze:
     def get_light_positions(self):
         return [x.position for x in self.lights]
 
-    def get_light_ambients(self):
+    def get_light_ambient(self):
         return [{"r": x.ambient[0], "g": x.ambient[1], "b": x.ambient[2]} for x in self.lights]
 
     def get_light_diffuses(self):
         return [{"r": x.diffuse[0], "g": x.diffuse[1], "b": x.diffuse[2]} for x in self.lights]
 
-    def get_light_speculars(self):
+    def get_light_specular(self):
         return [{"r": x.specular[0], "g": x.specular[1], "b": x.specular[2]} for x in self.lights]
 
 
@@ -264,7 +263,7 @@ class Light:
 inputs = {
             "W": False,  # Walk forward
             "A": False,  # Turn left
-            "S": False,  # Walk backwardsw
+            "S": False,  # Walk backwards
             "D": False,   # Turn right
             "UP": False,  # Turn up
             "DOWN": False,   # Turn down
