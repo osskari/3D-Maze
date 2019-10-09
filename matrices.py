@@ -143,6 +143,21 @@ class ViewMatrix:
         self.n = self.u * -s + self.n * c
         self.u = tmp_u
 
+    def rotateY(self, angle):
+        # rad = angle * pi / 180
+        c = cos(angle)
+        s = -sin(angle)
+
+        self.u = Vector(c * self.u.x - s * self.u.z, self.u.y, s * self.u.x + c * self.u.z)
+        self.v = Vector(c * self.v.x - s * self.v.z, self.v.y, s * self.v.x + c * self.v.z)
+        self.n = Vector(c * self.n.x - s * self.n.z, self.n.y, s * self.n.x + c * self.n.z)
+
+    def walk(self, delta):
+        # return Vector(self.u.x * delta + self.v.x * delta + self.n.x * delta
+        #               , 0
+        #               , self.u.z * delta + self.v.z * delta + self.n.z * delta)
+        return Vector (delta * self.n.x, 0, delta * self.n.z)
+
     def is_between(self, new_pos, drawable):
         scale_x, scale_y, scale_z = drawable.scale
         return Point(drawable.position.x - scale_x / 2 - drawable.offset,
