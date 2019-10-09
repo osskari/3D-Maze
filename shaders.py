@@ -1,6 +1,3 @@
-from OpenGL.GL import *
-from math import *  # trigonometry
-
 import sys
 
 from baseObjects import *
@@ -26,6 +23,7 @@ class Shader3D:
         if result != 1:  # shader didn't compile
             print("Couldn't compile fragment shader\nShader compilation Log:\n" + str(glGetShaderInfoLog(frag_shader)))
 
+        # Link shaders
         self.renderingProgramID = glCreateProgram()
         glAttachShader(self.renderingProgramID, vert_shader)
         glAttachShader(self.renderingProgramID, frag_shader)
@@ -43,37 +41,22 @@ class Shader3D:
         self.globalAmbientLoc = glGetUniformLocation(self.renderingProgramID, "u_global_ambient")
 
         # Light
-        # Position of light source
-        # self.lightPosLoc1 = glGetUniformLocation(self.renderingProgramID, "u_light_position_1")
-        # self.lightPosLoc2 = glGetUniformLocation(self.renderingProgramID, "u_light_position_2")
-        # self.lightPosLoc3 = glGetUniformLocation(self.renderingProgramID, "u_light_position_3")
+        # Position of light sources
         self.lightPosLoc = [glGetUniformLocation(self.renderingProgramID, "u_light_position_1"),
                             glGetUniformLocation(self.renderingProgramID, "u_light_position_2"),
                             glGetUniformLocation(self.renderingProgramID, "u_light_position_3")]
-        # Ambient of light source
+        # Ambient of light sources
         self.lightAmbientLoc = [glGetUniformLocation(self.renderingProgramID, "u_light_ambient_1"),
                                 glGetUniformLocation(self.renderingProgramID, "u_light_ambient_2"),
                                 glGetUniformLocation(self.renderingProgramID, "u_light_ambient_3")]
-
-        # self.lightAmbientLoc1 = glGetUniformLocation(self.renderingProgramID, "u_light_ambient_1")
-        # self.lightAmbientLoc2 = glGetUniformLocation(self.renderingProgramID, "u_light_ambient_2")
-        # self.lightAmbientLoc3 = glGetUniformLocation(self.renderingProgramID, "u_light_ambient_3")
-        # Diffuse of light source
+        # Diffuse of light sources
         self.lightDiffuseLoc = [glGetUniformLocation(self.renderingProgramID, "u_light_diffuse1"),
                                 glGetUniformLocation(self.renderingProgramID, "u_light_diffuse2"),
                                 glGetUniformLocation(self.renderingProgramID, "u_light_diffuse3")]
-
-        # self.lightDiffuseLoc1 = glGetUniformLocation(self.renderingProgramID, "u_light_diffuse1")
-        # self.lightDiffuseLoc2 = glGetUniformLocation(self.renderingProgramID, "u_light_diffuse2")
-        # self.lightDiffuseLoc3 = glGetUniformLocation(self.renderingProgramID, "u_light_diffuse3")
-        # Specular of light source
+        # Specular of light sources
         self.lightSpecularLoc = [glGetUniformLocation(self.renderingProgramID, "u_light_specular_1"),
                                  glGetUniformLocation(self.renderingProgramID, "u_light_specular_2"),
                                  glGetUniformLocation(self.renderingProgramID, "u_light_specular_3")]
-
-        # self.lightSpecularLoc1 = glGetUniformLocation(self.renderingProgramID, "u_light_specular_1")
-        # self.lightSpecularLoc2 = glGetUniformLocation(self.renderingProgramID, "u_light_specular_2")
-        # self.lightSpecularLoc3 = glGetUniformLocation(self.renderingProgramID, "u_light_specular_3")
 
         # Material
         # Material position
