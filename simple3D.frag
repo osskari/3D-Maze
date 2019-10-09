@@ -30,35 +30,34 @@ varying vec4 v_h_3; // H vector for light 3
 
 void main(void)
 {
-    // Lambert value for light 1
-	float lambert_1 = max(dot(v_normal, v_s_1), 0);
-    // Phong value for light 1
-	float phong_1 = max(dot(v_normal, v_h_1), 0);
+    // Array of S vector for each light
+    vec4 s[3] = {v_s_1, v_s_2, v_s_3};
+    // Array of H vector for each light
+    vec4 h[3] = {v_h_1, v_h_2, v_h_3};
+    // Array of ambient values for each light
+    vec4 ambient[3] = {u_light_ambient_1, u_light_ambient_2, u_light_ambient_3};
+    // Array of diffuse values for each light
+    vec4 diffuse[3] = {u_light_diffuse_1, u_light_diffuse_2, u_light_diffuse_3};
+    // Array of specular values for each light
+    vec4 specular[3] = {u_light_specular_1, u_light_specular_2, u_light_specular_3};
+    // Array to store lambert for each light
+    float lambert[3];
+    // Array to store Phong for each light
+    float phong[3];
+    // Variable for storing the sum of I for each light
+    vec4 i_sum = vec4(0, 0, 0, 1);
+    // For each light
+    for(int i = 0; i < 3; i++){
+        // Calculate lambert
+        lambert[i] = max(dot(v_normal, s[i]), 0);
+        //Calculate phong
+        phong[i] = max(dot(v_normal, h[i]), 0);
 
-    // Lambert value for light 2
-    float lambert_2 = max(dot(v_normal, v_s_2), 0);
-    // Phong value for light 2
-	float phong_2 = max(dot(v_normal, v_h_2), 0);
-
-    // Lambert value for light 2
-    float lambert_3 = max(dot(v_normal, v_s_3), 0);
-    // Phong value for light 2
-	float phong_3 = max(dot(v_normal, v_h_3), 0);
-
-    // I = light_amb * mat_amb + light_diff * mat_amb * lambert + light_spec * mat_spec * phong
-    // I for light 1
-    vec4 i_1 = u_light_ambient_1 * u_mat_ambient
-                   + lambert_1 * u_light_diffuse_1 * u_mat_diffuse
-                   + u_light_specular_1 * u_mat_specular * pow(phong_1, u_mat_shininess);
-    // I for light 2
-    vec4 i_2 = u_light_ambient_2 * u_mat_ambient
-                   + lambert_2 * u_light_diffuse_2 * u_mat_diffuse
-                   + u_light_specular_2 * u_mat_specular * pow(phong_2, u_mat_shininess);
-     // I for light 2
-    vec4 i_3 = u_light_ambient_3 * u_mat_ambient
-                   + lambert_3 * u_light_diffuse_3 * u_mat_diffuse
-                   + u_light_specular_3 * u_mat_specular * pow(phong_3, u_mat_shininess);
-
+        // I = light_amb * mat_amb + light_diff * mat_amb * lambert + light_spec * mat_spec * phong
+        i_sum += ambient[i] * u_mat_ambient
+                    + lambert[i] * diffuse[i] * u_mat_diffuse
+                    + pow(phong[i], u_mat_shininess) * specular[i] * u_mat_specular;
+    }
     // Final colour for fragment is global ambient on material + I1 + I2 + I3
-    gl_FragColor = (u_global_ambient * u_mat_ambient) + i_1 + i_2 + i_3;
+    gl_FragColor = (u_global_ambient * u_mat_ambient) + i_sum;
 }
