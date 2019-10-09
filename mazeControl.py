@@ -31,8 +31,6 @@ class Maze3D:
         if self.sun_angle > 20 * pi:
             self.sun_angle = 0
 
-
-
         # Handle user input
         if self.inputs["W"]:
             if self.game.maze.update_player(self.game.view_matrix, self.game.player.speed, delta_time):
@@ -121,7 +119,7 @@ class Maze3D:
                     self.inputs["RIGHT"] = False
                 if event.key == K_LEFT:
                     self.inputs["LEFT"] = False
-            return False
+        return False
 
     def program_loop(self):
         exiting = False

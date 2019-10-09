@@ -9,6 +9,7 @@ uniform vec4 u_eye_position; // Position of eye
 
 uniform vec4 u_light_position_1; // Position of light 1
 uniform vec4 u_light_position_2; // Position of light 2
+uniform vec4 u_light_position_3; // Position of light 3
 
 varying vec4 v_normal; // Local coordinate varying normal
 
@@ -17,6 +18,9 @@ varying vec4 v_h_1; // H vector for light 1
 
 varying vec4 v_s_2; // S vector for light 2
 varying vec4 v_h_2; // H vector for light 2
+
+varying vec4 v_s_3; // S vector for light 3
+varying vec4 v_h_3; // H vector for light 3
 
 void main(void)
 {
@@ -35,19 +39,28 @@ void main(void)
     // Convert position to global coordinates
 	position = u_view_matrix * position;
 
-    // Find S vector for light 1
-	v_s_1 = normalize(u_light_position_1 - position);
-    // Find V vector for light 1
-	vec4 v_1 = normalize(u_eye_position - position);
-    // Find H vector for light 1
-	v_h_1 = normalize(v_s_1+v_1);
+	// S is the vector from material to light
+	// V is the vector from material to eye
+	// H is the halfway vector between eye and light
+	// If H == material normal then eye and light are in mirrored positions over the material normal
+
+    // Find V vector
+	vec4 v = normalize(u_eye_position - position);
 
     // Find S vector for light 1
-	v_s_2 = normalize(u_light_position_2 - position);
-    // Find V vector for light 1
-	vec4 v_2 = normalize(u_eye_position - position);
+	v_s_1 = normalize(u_light_position_1 - position);
     // Find H vector for light 1
-	v_h_2 = normalize(v_s_2+v_2);
+	v_h_1 = normalize(v_s_1+v);
+
+    // Find S vector for light 2
+	v_s_2 = normalize(u_light_position_2 - position);
+    // Find H vector for light 2
+	v_h_2 = normalize(v_s_2+v);
+
+	// Find S vector for light 3
+	v_s_3 = normalize(u_light_position_3 - position);
+    // Find H vector for light 3
+	v_h_3 = normalize(v_s_3+v);
 
     // Convert position to viewport coordinates
 	position = u_projection_matrix * position;

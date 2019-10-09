@@ -44,17 +44,36 @@ class Shader3D:
 
         # Light
         # Position of light source
-        self.lightPosLoc1 = glGetUniformLocation(self.renderingProgramID, "u_light_position_1")
-        self.lightPosLoc2 = glGetUniformLocation(self.renderingProgramID, "u_light_position_2")
+        # self.lightPosLoc1 = glGetUniformLocation(self.renderingProgramID, "u_light_position_1")
+        # self.lightPosLoc2 = glGetUniformLocation(self.renderingProgramID, "u_light_position_2")
+        # self.lightPosLoc3 = glGetUniformLocation(self.renderingProgramID, "u_light_position_3")
+        self.lightPosLoc = [glGetUniformLocation(self.renderingProgramID, "u_light_position_1"),
+                            glGetUniformLocation(self.renderingProgramID, "u_light_position_2"),
+                            glGetUniformLocation(self.renderingProgramID, "u_light_position_3")]
         # Ambient of light source
-        self.lightAmbientLoc1 = glGetUniformLocation(self.renderingProgramID, "u_light_ambient_1")
-        self.lightAmbientLoc2 = glGetUniformLocation(self.renderingProgramID, "u_light_ambient_2")
+        self.lightAmbientLoc = [glGetUniformLocation(self.renderingProgramID, "u_light_ambient_1"),
+                                glGetUniformLocation(self.renderingProgramID, "u_light_ambient_2"),
+                                glGetUniformLocation(self.renderingProgramID, "u_light_ambient_3")]
+
+        # self.lightAmbientLoc1 = glGetUniformLocation(self.renderingProgramID, "u_light_ambient_1")
+        # self.lightAmbientLoc2 = glGetUniformLocation(self.renderingProgramID, "u_light_ambient_2")
+        # self.lightAmbientLoc3 = glGetUniformLocation(self.renderingProgramID, "u_light_ambient_3")
         # Diffuse of light source
-        self.lightDiffuseLoc1 = glGetUniformLocation(self.renderingProgramID, "u_light_diffuse1")
-        self.lightDiffuseLoc2 = glGetUniformLocation(self.renderingProgramID, "u_light_diffuse2")
+        self.lightDiffuseLoc = [glGetUniformLocation(self.renderingProgramID, "u_light_diffuse1"),
+                                glGetUniformLocation(self.renderingProgramID, "u_light_diffuse2"),
+                                glGetUniformLocation(self.renderingProgramID, "u_light_diffuse3")]
+
+        # self.lightDiffuseLoc1 = glGetUniformLocation(self.renderingProgramID, "u_light_diffuse1")
+        # self.lightDiffuseLoc2 = glGetUniformLocation(self.renderingProgramID, "u_light_diffuse2")
+        # self.lightDiffuseLoc3 = glGetUniformLocation(self.renderingProgramID, "u_light_diffuse3")
         # Specular of light source
-        self.lightSpecularLoc1 = glGetUniformLocation(self.renderingProgramID, "u_light_specular_1")
-        self.lightSpecularLoc2 = glGetUniformLocation(self.renderingProgramID, "u_light_specular_2")
+        self.lightSpecularLoc = [glGetUniformLocation(self.renderingProgramID, "u_light_specular_1"),
+                                 glGetUniformLocation(self.renderingProgramID, "u_light_specular_2"),
+                                 glGetUniformLocation(self.renderingProgramID, "u_light_specular_3")]
+
+        # self.lightSpecularLoc1 = glGetUniformLocation(self.renderingProgramID, "u_light_specular_1")
+        # self.lightSpecularLoc2 = glGetUniformLocation(self.renderingProgramID, "u_light_specular_2")
+        # self.lightSpecularLoc3 = glGetUniformLocation(self.renderingProgramID, "u_light_specular_3")
 
         # Material
         # Material position
@@ -99,8 +118,8 @@ class Shader3D:
 
     # Light
     def set_light_position(self, lights):
-        glUniform4f(self.lightPosLoc1, lights[0].x, lights[0].y, lights[0].z, 1.0)
-        glUniform4f(self.lightPosLoc2, lights[1].x, lights[1].y, lights[1].z, 1.0)
+        for i, light in enumerate(lights):
+            glUniform4f(self.lightPosLoc[i], light.x, light.y, light.z, 1.0)
 
     def set_light_color(self, lights):
         self.set_light_ambient(lights)
@@ -108,16 +127,16 @@ class Shader3D:
         self.set_light_specular(lights)
 
     def set_light_ambient(self, lights):
-        glUniform4f(self.lightAmbientLoc1, lights[0]["r"], lights[0]["g"], lights[0]["b"], 1.0)
-        glUniform4f(self.lightAmbientLoc2, lights[1]["r"], lights[1]["g"], lights[1]["b"], 1.0)
+        for i, light in enumerate(lights):
+            glUniform4f(self.lightAmbientLoc[i], light["r"], light["g"], light["b"], 1.0)
 
     def set_light_diffuse(self, lights):
-        glUniform4f(self.lightDiffuseLoc1, lights[0]["r"], lights[0]["g"], lights[0]["b"], 1.0)
-        glUniform4f(self.lightDiffuseLoc2, lights[1]["r"], lights[1]["g"], lights[1]["b"], 1.0)
+        for i, light in enumerate(lights):
+            glUniform4f(self.lightDiffuseLoc[i], light["r"], light["g"], light["b"], 1.0)
 
     def set_light_specular(self, lights):
-        glUniform4f(self.lightSpecularLoc1, lights[0]["r"], lights[0]["g"], lights[0]["b"], 1.0)
-        glUniform4f(self.lightSpecularLoc2, lights[1]["r"], lights[1]["g"], lights[1]["b"], 1.0)
+        for i, light in enumerate(lights):
+            glUniform4f(self.lightSpecularLoc[i], light["r"], light["g"], light["b"], 1.0)
 
     # Material
     def set_position_attribute(self, vertex_array):

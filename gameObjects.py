@@ -55,7 +55,6 @@ class Cube(Drawable):
                              1.0, 0.0, 0.0]
 
     def __eq__(self, other):
-        print(other.position - Point(*other.scale) < self.position < other.position + Point(*other.scale))
         return other.position - Point(*other.scale) < self.position < other.position + Point(*other.scale)
 
     def __add__(self, other):
@@ -146,8 +145,9 @@ class Maze:
 
     def create_lights(self, player_pos,):
         # self.lights.append(Light(player_pos, (0.2, 0.2, 0.2)))
+        self.lights.append(Light(player_pos, (0.5, 0.5, 0.5)))
         self.lights.append(Light(self.sun.position, (0.5, 0.5, 0.5)))
-        self.lights.append(Light(self.sun.position, (0.5, 0.5, 0.5)))
+        self.lights.append(Light(Point(-45, 10, -50), (0.2, 0.95, 0.2)))
 
     def draw_maze(self, shader, model_matrix, sun_angle):
         # Draw sun
@@ -192,6 +192,7 @@ class Maze:
             # If slide vector doesn't collide with a different wall, move about slide vector
             if not self.collision(new_pos, view_matrix):
                 view_matrix.eye += new_pos
+        return False
 
     # Checks wall array for collision and returns the wall it finds
     def collision(self, new_pos, matrix):
