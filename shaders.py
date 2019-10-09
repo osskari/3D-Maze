@@ -2,6 +2,8 @@ import sys
 
 from baseObjects import *
 
+from OpenGL.GL import *
+
 
 class Shader3D:
     def __init__(self):
