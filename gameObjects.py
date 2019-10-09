@@ -2,9 +2,10 @@ from matrices import *
 from shaders import *
 
 
+# A drawable cube
 class Cube(Drawable):
     def __init__(self, ambient, diffuse, specular, position, scale, shininess):
-        Drawable.__init__(self, ambient, diffuse, specular, position, scale, shininess, 0.5)
+        Drawable.__init__(self, ambient, diffuse, specular, position, scale, shininess, 0.5)  # set all parent variables
         self.position_array = [-0.5, -0.5, -0.5,
                                -0.5, 0.5, -0.5,
                                0.5, 0.5, -0.5,
@@ -28,7 +29,7 @@ class Cube(Drawable):
                                0.5, -0.5, -0.5,
                                0.5, -0.5, 0.5,
                                0.5, 0.5, 0.5,
-                               0.5, 0.5, -0.5]
+                               0.5, 0.5, -0.5]  # Relative positions on cube to be drawn
         self.normal_array = [0.0, 0.0, -1.0,
                              0.0, 0.0, -1.0,
                              0.0, 0.0, -1.0,
@@ -52,34 +53,42 @@ class Cube(Drawable):
                              1.0, 0.0, 0.0,
                              1.0, 0.0, 0.0,
                              1.0, 0.0, 0.0,
-                             1.0, 0.0, 0.0]
+                             1.0, 0.0, 0.0]  # Relative vectors of surfaces
 
+    # Check if self cube is within the boundaries of another cube
     def __eq__(self, other):
         return other.position - Point(*other.scale) < self.position < other.position + Point(*other.scale)
 
+    # Syntactic sugar for adding cube positions together
     def __add__(self, other):
         return self.position + other.position
 
+    # syntactic sugar for subtracting cube positions
     def __sub__(self, other):
-        return self.position - other.position
+        return Point(*(self.position - other.position))
 
+    # Draw cube
     def draw(self, model_matrix, shader):
         super(Cube, self).draw(model_matrix, shader)
         for i in range(0, 21, 4):
             glDrawArrays(GL_TRIANGLE_FAN, i, 4)
 
 
+# Drawable sphere
 class Sphere(Drawable):
     def __init__(self, ambient, diffuse, specular, position, scale, shininess, stacks=12, slices=24):
-        Drawable.__init__(self, ambient, diffuse, specular, position, scale, shininess, 3)
-        self.vertex_array = []
-        self.slices = slices
+        Drawable.__init__(self, ambient, diffuse, specular, position, scale, shininess, 3)  # set all parent variables
+        self.vertex_array = []  # Array of vertices
+        self.slices = slices  # Number of slices
+        self.stacks = stacks  # Number of stacks
 
-        stack_interval = pi/stacks
+        # Find interval between slices and stacks
+        stack_interval = pi/self.stacks
         slice_interval = 2.0*pi/slices
         self.vertex_count = 0
 
-        for stack_count in range(stacks):
+        # populate vertex array
+        for stack_count in range(self.stacks):
             stack_angle = stack_count * stack_interval
             for slice_count in range(slices + 1):
                 slice_angle = slice_count * slice_interval
@@ -95,16 +104,18 @@ class Sphere(Drawable):
         self.position_array = self.vertex_array
         self.normal_array = self.vertex_array
 
+    # set position of the sphere
     def set_position(self, new_position):
         self.position = new_position
 
+    # Draw sphere
     def draw(self, model_matrix, shader):
         super(Sphere, self).draw(model_matrix, shader)
-        # draw
         for i in range(0, self.vertex_count, (self.slices + 1) * 2):
             glDrawArrays(GL_TRIANGLE_STRIP, i, (self.slices + 1) * 2)
 
 
+# Contains base objects needed to run the game
 class Game:
     def __init__(self, player):
         self.shader = Shader3D()
