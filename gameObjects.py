@@ -189,8 +189,7 @@ class Maze:
             if collision_wall == self.goal:
                 return True
             # calculate the slide vector
-            # new_pos = self.slide(new_pos, collision_wall)
-            new_pos = view_matrix.walk(-player_speed * delta_time)
+            new_pos = self.slide(view_matrix.walk(-player_speed * delta_time), collision_wall)
             # If slide vector doesn't collide with a different wall, move about slide vector
             if not self.collision(new_pos, view_matrix):
                 view_matrix.eye += new_pos

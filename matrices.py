@@ -156,7 +156,7 @@ class ViewMatrix:
         # return Vector(self.u.x * delta + self.v.x * delta + self.n.x * delta
         #               , 0
         #               , self.u.z * delta + self.v.z * delta + self.n.z * delta)
-        return Vector (delta * self.n.x, 0, delta * self.n.z)
+        return Vector(delta * self.n.x, 0, delta * self.n.z)
 
     def is_between(self, new_pos, drawable):
         scale_x, scale_y, scale_z = drawable.scale
