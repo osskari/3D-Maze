@@ -63,8 +63,8 @@ class Cube(Drawable):
     def __sub__(self, other):
         return self.position - other.position
 
-    def draw(self, model_matrix, shader):
-        super(Cube, self).draw(model_matrix, shader)
+    def draw(self, model_matrix, shader, r_x, r_y, r_z):
+        super(Cube, self).draw(model_matrix, shader, r_x, r_y, r_z)
         for i in range(0, 21, 4):
             glDrawArrays(GL_TRIANGLE_FAN, i, 4)
 
@@ -98,8 +98,8 @@ class Sphere(Drawable):
     def set_position(self, new_position):
         self.position = new_position
 
-    def draw(self, model_matrix, shader):
-        super(Sphere, self).draw(model_matrix, shader)
+    def draw(self, model_matrix, shader, r_x, r_y, r_z):
+        super(Sphere, self).draw(model_matrix, shader, r_x, r_y, r_z)
         # draw
         for i in range(0, self.vertex_count, (self.slices + 1) * 2):
             glDrawArrays(GL_TRIANGLE_STRIP, i, (self.slices + 1) * 2)
@@ -147,35 +147,35 @@ class Maze:
         self.lights.append(Light(self.sun.position, (0.5, 0.5, 0.5)))
         self.lights.append(Light(Point(-45, 10, -50), (0.2, 0.95, 0.2)))
 
-    def draw_maze(self, shader, model_matrix):
+    def draw_maze(self, shader, model_matrix, angle):
         # Draw sun
         self.sun.set_vertices(shader)
         self.sun.set_color(shader)
         model_matrix.push_matrix()
-        self.sun.draw(model_matrix, shader)
+        self.sun.draw(model_matrix, shader, 0, 0, 0)
         model_matrix.pop_matrix()
         # Draw walls
         self.walls[0].set_vertices(shader)
         self.walls[0].set_color(shader)
         for wall in self.walls:
             model_matrix.push_matrix()
-            wall.draw(model_matrix, shader)
+            wall.draw(model_matrix, shader, 0, 0, 0)
             model_matrix.pop_matrix()
         # Draw floor
         self.floor.set_color(shader)
         model_matrix.push_matrix()
-        self.floor.draw(model_matrix, shader)
+        self.floor.draw(model_matrix, shader, 0, 0, 0)
         model_matrix.pop_matrix()
         # Draw goal
         self.goal.set_color(shader)
         model_matrix.push_matrix()
-        self.goal.draw(model_matrix, shader)
+        self.goal.draw(model_matrix, shader, angle, angle,0)
         model_matrix.pop_matrix()
 
     def update_player(self, view_matrix, player_speed, delta_time):
         # Get new motion vector
-        # new_pos = view_matrix.slide(0, 0, -player_speed * delta_time)
-        new_pos = view_matrix.walk(-player_speed * delta_time)
+        new_pos = view_matrix.slide(0, 0, -player_speed * delta_time)
+        # new_pos = view_matrix.walk(-player_speed * delta_time)
         # Get wall the player is about to collide with
         collision_wall = self.collision(new_pos, view_matrix)
         # If there's no wall to collide with, move the player normally

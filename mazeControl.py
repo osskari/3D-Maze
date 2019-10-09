@@ -3,16 +3,16 @@ from pygame.locals import *
 
 from gameObjects import *
 
-
+# Base class for the game
 class Maze3D:
     def __init__(self):
         pygame.init()
-        pygame.display.set_mode((800, 600), pygame.OPENGL | pygame.DOUBLEBUF)
+        pygame.display.set_mode((1600, 1000), pygame.OPENGL | pygame.DOUBLEBUF) #Sets the display as 800, 600
 
         self.game = Game(Player(Point(-5, 3, -5), 10, pi, Point(-6, 3, -6)))
 
         self.game.look()
-        self.game.set_perspective(pi / 2, 800 / 600, 0.3, 300)
+        self.game.set_perspective(pi / 2, 1600 / 1000, 0.3, 300)
 
         self.inputs = inputs
         self.game.maze.create_walls((0.1, 0.01, 0.01), (0.6, 0.6, 0.6), (0.9, 0.5, 0.2))
@@ -22,6 +22,7 @@ class Maze3D:
         self.clock.tick()
 
         self.sun_angle = 0
+        self.angle = 0
 
     def update(self):
         delta_time = self.clock.tick() / 1000.0
@@ -30,6 +31,10 @@ class Maze3D:
         self.sun_angle += (pi / 2) * delta_time
         if self.sun_angle > 20 * pi:
             self.sun_angle = 0
+
+        self.angle += pi * delta_time
+        if self.angle > 2 * pi:
+            self.angle -= (2 * pi)
 
         # Handle user input
         if self.inputs["W"]:
@@ -67,7 +72,7 @@ class Maze3D:
         glClearColor(0.0, 0.0, 0.0, 1.0)
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
-        glViewport(0, 0, 800, 600)
+        glViewport(0, 0, 1600, 1000)
 
         self.game.shader.set_view_matrix(self.game.view_matrix.get_matrix())
 
@@ -77,7 +82,7 @@ class Maze3D:
         self.game.model_matrix.load_identity()
 
         # Draw stuff
-        self.game.maze.draw_maze(self.game.shader, self.game.model_matrix)
+        self.game.maze.draw_maze(self.game.shader, self.game.model_matrix, self.angle)
 
         pygame.display.flip()
 

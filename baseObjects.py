@@ -30,9 +30,12 @@ class Drawable:
         shader.set_material_specular(*self.specular)
         shader.set_material_shininess(self.shininess)
 
-    def draw(self, model_matrix, shader):
+    def draw(self, model_matrix, shader, r_x, r_y, r_z):
         # set transformations
         model_matrix.add_translation(*self.position)
+        model_matrix.add_x_rotation(r_x)
+        model_matrix.add_y_rotation(r_y)
+        model_matrix.add_z_rotation(r_z)
         model_matrix.add_scale(*self.scale)
         # set model matrix
         shader.set_model_matrix(model_matrix.matrix)
