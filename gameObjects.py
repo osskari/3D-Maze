@@ -174,8 +174,8 @@ class Maze:
 
     def update_player(self, view_matrix, player_speed, delta_time):
         # Get new motion vector
-        new_pos = view_matrix.slide(0, 0, -player_speed * delta_time)
-        # new_pos = view_matrix.walk(-player_speed * delta_time)
+        # new_pos = view_matrix.slide(0, 0, -player_speed * delta_time)
+        new_pos = view_matrix.walk(-player_speed * delta_time)
         # Get wall the player is about to collide with
         collision_wall = self.collision(new_pos, view_matrix)
         # If there's no wall to collide with, move the player normally
